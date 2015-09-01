@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>MultiViz.js: Multiplex network visualizer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <link href="https://handsontable.com//bower_components/handsontable/dist/handsontable.full.min.css" rel="stylesheet">
+    <script src="https://handsontable.com//bower_components/handsontable/dist/handsontable.full.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}">
+
+    <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.fileupload.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.fileupload-ui.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-colorpicker.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+
+<body>
+    <div id="popup" class="infobox" style="display: none; background-color: white; "></div>
+    <div id="display-instructions">
+          <span>menu»</span>
+    </div>
+
+    <div id="fileupload-div" class="div-center">
+        <table id="instructions" width="200">
+            <tr>
+            <td><p>
+                Welcome to <b>MultiNetViz.js</b>, a network visualization tool for dynamic, multi-layered networks in WebGL and Javascript. 
+            </p></td>
+            </tr>
+
+            <tr>
+                <td id="how-it-works">
+                    <i class="glyphicon glyphicon-question"></i>
+                    <span>How does it work</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button id="samplevis-3layers" type="submit" class="btn btn-danger delete">
+                        <span>See sample with 3 layers</span>
+                    </button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button id="samplevis-2layers" type="submit" class="btn btn-danger delete">
+                        <span>See sample with 2 layers</span>
+                    </button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <span class="btn btn-success fileinput-button">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        <span>Add edgelist</span>
+                        <input  id="fileupload" name="file" multiple="" type="file">
+                    </span>
+
+                    <div id="files" class="files"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td >
+                    <span class="btn btn-success fileinput-button fileinput-button-nodes"  style="display:none;">
+                        <i class="glyphicon glyphicon-plus"></i>
+                        <span>Add node attributes</span>
+                        <input id="fileupload-nodes" name="nodefile" multiple="" type="file">
+                    </span>
+
+                    <div id="files-nodes" class="files"></div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="layout-selection dropdown" style="display:none;">
+                      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                        <span></span>
+                      </button>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                                            <li role="presentation"><a role="menuitem" tabindex="1" href="#" onclick="displayLayout('Fruchterman-Reingold')">Fruchterman-Reingold (parallel)</a></li>
+                                                            <li role="presentation"><a role="menuitem" tabindex="2" href="#" onclick="displayLayout('Kamada-Kawai')">Kamada-Kawai</a></li>
+                                                            <!--li role="presentation"><a role="menuitem" tabindex="3" href="#" onclick="displayLayout('LGL')">LGL</a></li-->
+                                                            <li role="presentation"><a role="menuitem" tabindex="4" href="#" onclick="displayLayout('Star')">Star</a></li>
+                                                            <li role="presentation"><a role="menuitem" tabindex="5" href="#" onclick="displayLayout('Random')">Random</a></li>
+                      </ul>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div id="directionOptions" class="btn-group" data-toggle="buttons" style="display:none; margin-top:10px;">
+                      <label class="btn btn-primary active">
+                                    <input type="radio" name="directionOptions" id="directionOption1" value="Directed" autocomplete="off" checked> Directed
+                      </label>
+                      <label class="btn btn-primary">
+                                    <input type="radio" name="directionOptions" id="directionOption2" value="Undirected" autocomplete="off"> Undirected
+                      </label>
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button id="upload" type="submit" class="btn btn-primary start" style="display:none;">
+                        <span>Start upload</span>
+                    </button>
+                </td>
+            </tr>
+
+        </table> 
+
+    </div>
+
+    <div id="how" style="display:none;">
+
+        <i id="how" class="glyphicon glyphicon-x" style="float:right"></i>
+
+        <table>
+                        
+            <tr>
+                <td>
+                    Upload an edgelist with 4 columns 
+                    <b>source</b>;<b>target</b>;<b>layer</b>;<b>timestamp</b>
+                </td>   
+            </tr>
+
+            <tr>
+                <td>
+                    The tool works best if you have <b>WebGL</b> enabled in your browser.
+                </td>   
+            </tr>
+
+            <tr>
+                <td>
+                    <b>layer</b> stands for the identifier of the layer which the edge belongs to.
+                    The tool supports arbitrary number of layers.
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <b>timestamp</b> must be a date string in "YYYY-MM-DD" format. 
+                    After the graph is rendered, you can filter the edges based on the timestamp using the slider.                        
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    The common nodes among the layers will be highlighed with blue. 
+                    You can click on nodes and highlight their neighborhoods in all layers.
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="error-container"></div>
+
+    <div id="graph-info"></div>
+
+    <div id="slider-container">
+        <input type="text" id="year" readonly>
+        <div id="slider" style="float:right;"></div>
+    </div>
+
+    </div>
+
+    <div id="data-table" style="position: fixed; width: 400px; float: left; margin-bottom: 50px; margin-top: 50px; margin-right: 40px; overflow: auto; height: 800px; display: none;"></div>
+    <div id="table-button" style="position: fixed; bottom: 3px; float:left;">
+        <a id="show-table" href="#">Show table</a>
+        <a id="hide-table" style="display: none;" href="#">Hide table</a>
+    </div>
+
+    <div id="info-container">
+
+        <table style="">
+            <tr>
+                <td colspan="2">
+                    <div id="cameraOptions" class="btn-group" data-toggle="buttons">
+                        <label class="btn btn-primary active">
+                            <input type="radio" name="cameraOptions" id="cameraOption1" value="Perspective" autocomplete="off" checked> Perspective
+                          </label>
+
+                          <label class="btn btn-primary">
+                              <input type="radio" name="cameraOptions" id="cameraOption2" value="Orthographic" autocomplete="off"> Ortographic
+                          </label>
+                    </div>
+                </td>
+            </tr>
+        
+            <tr>
+                <td colspan="2">
+                    <div id="layoutOptions" class="btn-group" data-toggle="buttons">
+                      <label class="btn btn-primary active">
+                        <input type="radio" name="layoutOptions" id="option1" value="3D" autocomplete="off" checked> 3D
+                      </label>
+                      <label class="btn btn-primary">
+                        <input type="radio" name="layoutOptions" id="option2" value="2D" autocomplete="off"> 2D
+                      </label>
+                    </div>
+
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
+                    <div id="degreeOptions" class="btn-group" data-toggle="buttons">
+                      <label class="btn btn-primary active">
+                        <input type="radio" name="degreeOptions" id="option1" value="indegree" autocomplete="off" checked> In degree
+                      </label>
+                      <label class="btn btn-primary">
+                        <input type="radio" name="degreeOptions" id="option2" value="outdegree" autocomplete="off"> Out degree
+                      </label>
+                    </div>
+
+
+                </td>
+            </tr>
+            
+
+            <tr style="">
+                <td>
+                    <label for="layout">Layout:</label>
+                </td>
+                <td class="right">
+                    <div id="layout-container">
+                            <textarea type="text" id="layout" readonly style=""></textarea>
+                    </div>
+                </td>
+            </tr>
+            
+            <tr>
+                    <td>
+                    <b>Selected Layer:</b>
+                </td>
+                <td class="right selection">
+                    <div class="layer-selection dropdown">
+                      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                      </ul>
+                    </div>
+                </td>
+            </tr>
+            
+            
+            <tr>
+                <td>    
+                    <label for="nrnodes">#Nodes:</label>
+                </td>
+                <td class="right">
+                    <input type="text" id="nrnodes" readonly >
+                </td>
+                
+            </tr>
+            <tr>
+                <td>
+                    <label for="nredges">#Edges:</label>
+                </td>
+                <td class="right">
+                    <input type="text" id="nredges" readonly >
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="nrcolor">#Color:</label>
+                </td>
+                <td class="right">
+                    <input type="text" id="nrcolor" >
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>    
+                    <label for="selected_node">Selected Node:</label>
+                </td>
+                <td class="right">
+                    <div id="selected-node-container">
+                            <textarea type="text" id="selected_node" readonly ></textarea>
+                    </div>
+                </td>
+                
+            </tr>
+
+
+
+
+            <tr>
+            
+                    <td>
+                    <b>Share Url:</b>
+                </td>
+                <td>
+                
+                    <div id="url-container">
+                        <textarea name="clipboard-text" id="clipboard-text" class="form-control" readonly>
+                        </textarea>
+                    </div>
+                    <p></p>
+                </td>
+            
+            </tr>
+            
+            <tr>
+                <td colspan="2">
+                    <button id="copy-url" type="submit" class="btn btn-danger delete" style="width:100%;margin:10px 0;" data-clipboard-target="clipboard-text" >
+                        <span>Copy url to clipboard</span>
+                    </button>
+                </td>
+            </tr>
+
+            <tr id="clear-selection-tr" style="display: none">
+                <td colspan="2">
+                    <button id="clear-selection" type="submit" class="btn btn-danger delete" style="width:100%;margin:10px 0;">
+                        <span>Clear selection</span>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button id="take-snapshot" type="submit" class="btn btn-danger delete" style="width:100%;margin:10px 0;" >
+                        <span>Snapshot</span>
+                    </button>
+                </td>
+            </tr>
+
+           <tr>
+                <td>
+                    <button id="graph-replay" type="submit" class="btn btn-danger delete graph-replay-buttons" style="width:100%" >
+                        <span>Replay</span>
+                    </button>
+
+                    <button id="graph-replay-pause" type="submit" class="btn btn-danger delete graph-replay-buttons" style="width:100%;display:none;" >
+                        <span>Pause</span>
+                    </button>
+                    
+                    <button id="graph-replay-continue" type="submit" class="btn btn-danger delete graph-replay-buttons" style="width:100%;display:none;" >
+                        <span>Continue</span>
+                    </button>
+
+                </td>
+                <td  class="right selection">
+                    <select id="replay-mode" class="form-control">
+                            <option value="window">Window</option>
+                        <option value="single">Fixed Start</option>
+                    </select>
+                </td>
+            </tr>
+          <tr>
+                <td>
+                    <b>Replay Speed:</b>
+                </td>
+                <td class="right selection">
+                    <select id="replay-speed" class="form-control">
+                        <option value="1">1x</option>
+                        <option value="2">2x</option>
+                        <option value="4">4x</option>
+                    </select>
+                </td>
+            </tr>
+
+
+                    <tr>
+                            <td colspan="2">
+                                    <b>Layer Distance</b>
+                            </td>
+                    </tr>
+                    <tr>
+                            <td colspan="2">
+                                    <div id="distanceSlider" style=""></div>
+                            </td>
+        
+                    </tr>
+
+
+
+        </table>
+    </div>
+
+    <div id="loading-container"></div>
+    <div id="container"></div>
+
+
+    <script src="{{ url_for('static', filename='js/jquery-2.1.4.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-ui-1.11.4.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.cookie.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.fileupload.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/spin.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/zerocopy/ZeroClipboard.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-colorpicker.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/threejs/three-r71.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/threejs/orbitcontrols.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/threejs/stats-r12.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/threejs/detector.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/sgvisuals.js') }}"></script>
+
+    <script>
+
+    /*
+     * Initialization of the spinner that is displayed as the network is being rendered  
+     * */               
+    var opts = {
+          lines: 25, // The number of lines to draw
+          length: 90, // The length of each line
+          width: 10, // The line thickness
+          radius: 100, // The radius of the inner circle
+          corners: 1, // Corner roundness (0..1)
+          rotate: 0, // The rotation offset
+          direction: 1, // 1: clockwise, -1: counterclockwise
+          color: '#D43F3A', // #rgb or #rrggbb or array of colors
+          speed: 0.5, // Rounds per second
+          trail: 60, // Afterglow percentage
+          shadow: false, // Whether to render a shadow
+          hwaccel: false, // Whether to use hardware acceleration
+          className: 'spinner', // The CSS class to assign to the spinner
+          zIndex: 2e9, // The z-index (defaults to 2000000000)
+          top: '50%', // Top position relative to parent
+          left: '50%' // Left position relative to parent
+    };
+
+    var target = document.getElementById('loading-container');          
+    var spinner = new Spinner(opts).spin(target);
+
+    var globalData;
+    
+    
+    var currentPath = window.location.pathname;
+    //check if this is a url specific for a visualization
+    //TODO: match pathname to regex rather than "share" 
+    if( currentPath.indexOf("share") > -1) { 
+    
+        $('div#fileupload-div').hide(); 
+        
+        $.ajax({url:currentPath,
+            beforeSend:function(){
+                if (destroyFunction != null) {
+                    destroyFunction();
+                }
+                $('#loading-container').show();
+            },
+            success:function(data){
+                $('#loading-container').hide();        
+                createGraph3D(data, getRenderData());
+                globalData = data;
+            }
+        });
+     
+    }else{
+    
+             $('div#fileupload-div').show();
+    }
+    
+    
+    function styleGraphLoaded(){
+            $('#loading-container').hide();
+        $('div.layout-selection').hide();
+        
+        
+        $('button#upload').hide();
+        
+                    $('#fileupload-div').switchClass("div-center", "div-left" );     
+        $('#fileupload-div').slideUp(1000);
+        
+        $('#display-instructions').show();
+    
+    }
+    
+    
+
+    var cnt = 0;
+
+    $("#samplevis-3layers").click(function(){
+        $.ajax({url:"/sample/politics_sample_2",
+            beforeSend:function(){
+                if (destroyFunction != null) {
+                    destroyFunction();
+                }
+                 $('#fileupload-div').switchClass("div-center", "div-left" );
+                     $('#fileupload-div').show();
+                 $('#loading-container').show();
+            },
+            success:function(data){
+                styleGraphLoaded();
+
+                createGraph3D(data, getRenderData());
+                globalData = data;
+            },
+            error:function(data){
+            
+                     $('#loading-container').hide();
+                     $('#fileupload-div').switchClass("div-center", "div-left" );
+                     $('#fileupload-div').show();
+
+            }
+        });
+    }); 
+
+     $("#samplevis-2layers").click(function(){
+        $.ajax({url:"/sgvisuals/sample-np/politics_sample_2l", //"pacs_89_sample_multi/",
+            beforeSend:function(){
+                if (destroyFunction != null) {
+                    destroyFunction();
+                }
+                $('#fileupload-div').switchClass("div-center", "div-left" );
+                    $('#fileupload-div').show();
+                $('#loading-container').show();
+            },
+            success:function(data){
+                styleGraphLoaded();
+
+                createGraph3D(data, getRenderData());
+                globalData = data;
+            },
+            error:function(data){
+            
+                     $('#loading-container').hide();
+                     $('#fileupload-div').switchClass("div-center", "div-left" );
+                     $('#fileupload-div').show();
+
+            }
+        });
+    }); 
+
+    $('#display-instructions').click(function(){
+
+        if( $('#fileupload-div').is(':visible') ){
+            $('#fileupload-div').hide(300); //slideUp(1000);
+            $(this).html("<span>menu»</span>");
+        }
+        else{   
+            $('#fileupload-div').show(400); //slideDown(1000);
+            $(this).html("<span>«menu</span>");
+        }
+
+    }); 
+    
+    
+    $('td#how-it-works').click(function(){
+        $('#how').show(400); //slideUp(1000);
+    }); 
+    
+    $('i#how').click(function(){
+        $('#how').hide(400); //slideUp(1000);
+    }); 
+    $('div#how').click(function(){
+        $('#how').hide(400); //slideUp(1000);
+    }); 
+    
+    
+    
+    
+
+    $('#layoutOptions').change(function(e) {
+       e.preventDefault();
+       $("[name='layoutOptions']").parent().removeClass("active");
+       var selection = $("[name='layoutOptions']:checked").val();
+
+        if (selection === "3D") {
+            $('#cameraOptions label').removeClass('disabled');
+            $("#distanceSlider").slider('enable');
+            fun = function() {
+                var renderData = getRenderData();
+                renderData.camera.position.z = 0;
+                renderData.camera.position.y = 1500;
+
+                createGraph3D(globalData, getRenderData());
+            };
+        } else {
+            $('#cameraOptions label').addClass('disabled');
+            $("#distanceSlider").slider('disable');
+            fun = function() {
+                var renderData = getRenderData();
+                renderData.camera.position.z = 1500;
+                renderData.camera.position.y = 0;
+
+                createGraph2D(globalData, renderData);
+            };
+        }
+        redrawGraph(fun);
+     });
+     
+     $('#degreeOptions').change(function(e) {
+       e.preventDefault();
+       $("[name='degreeOptions']").parent().removeClass("active");
+       var selection = $("[name='degreeOptions']:checked").val();
+
+        if (selection === "indegree") {
+            fun = function() {
+                createGraph3D(globalData, getRenderData(), function(v) {
+                    return v[2];
+                });
+            };
+        } else {
+            fun = function() {
+                createGraph3D(globalData, getRenderData(), function(v) {
+                    return v[3];
+                });
+            };
+        }
+        redrawGraph(fun);
+     });  
+
+
+
+              $('#cameraOption1').change(function(e){
+
+            var renderData = getRenderData();
+                            if( renderData.currentCamera != "Perspective" ){
+                    renderData.usePerspectiveCamera( renderData.camera.position );
+            }
+                            $(this).parent().addClass("active");
+            $("#cameraOption2").parent().removeClass("active");
+            renderData.render();
+              });
+              $('#cameraOption2').change(function(e){
+
+            var renderData = getRenderData();
+            if( renderData.currentCamera != "Ortographic"){
+                    renderData.useOrthographicCamera( renderData.camera.position );
+            }
+                            $(this).parent().addClass("active");
+            $("#cameraOption1").parent().removeClass("active");
+            renderData.render();
+              });
+
+              /*
+      $('#cameraOptions').change(function(e) {
+        e.preventDefault();
+        $("[name='cameraOptions']").parent().removeClass("active");
+        var selection = $("[name='cameraOptions']:checked").val();
+        var renderData = getRenderData();
+
+        if (selection === "Perspective") {
+            //perspective camera
+            renderData.usePerspectiveCamera( renderData.camera.position );
+        } else {
+            //orthographic camera
+            renderData.useOrthographicCamera( renderData.camera.position );
+        }
+                            
+        renderData.render();
+     });
+     */
+
+    function redrawGraph(createFn) {
+         $('#fileupload-div').switchClass("div-center", "div-left" );
+         $('#fileupload-div').show();
+         $('#loading-container').show();
+         $('#container').hide();
+
+         if (destroyFunction != null) {
+                destroyFunction();
+         }
+
+        window.setTimeout(function() {
+            createFn();
+            $('#loading-container').hide();
+            $('#container').show();
+        }, 10);
+   
+    }
+
+    $('#take-snapshot').click(function(e) {
+            var canvas = $("canvas")[0];
+            var img    = canvas.toDataURL("image/jpeg", 1.0);
+            console.log("Taking a snapshot ", img);
+            var pom = document.createElement('a');
+            pom.setAttribute('href',img); 
+            pom.setAttribute('download', "snapshot.jpeg");
+
+            pom.style.display = 'none';
+            document.body.appendChild(pom);
+
+            pom.click();
+
+            document.body.removeChild(pom);
+
+            /*
+        var cameraInfo = { rotation: getRenderData().camera.rotation, position: getRenderData().camera.position };
+
+        var range = JSON.stringify($( "#slider" ).slider( "option", "values" ));
+        window.open('/sgvisuals/snapshot?data-url='+encodeURIComponent(globalData.url)
+                    +'&camera='+encodeURIComponent(JSON.stringify(cameraInfo))
+                    +'&range='+encodeURIComponent(range));
+        */
+
+
+    });
+
+
+    /*
+     * URL to clipboard copying using ZeroClipboard.js
+     */
+
+    var clientTarget = new ZeroClipboard( $("#copy-url"), {
+        debug: false
+    } );
+
+    clientTarget.on( "load", function(clientTarget)
+    {
+        $('#flash-loaded').fadeIn();
+    
+        clientTarget.on( "complete", function(clientTarget, args) {
+            clientTarget.setText( args.text );
+            $('#target-to-copy-text').fadeIn();
+        } );
+    } );
+
+    
+    /*
+     * Graph file upload handling 
+     */
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+            
+    /*
+     * Handle file uploads here. If the upload is successful, render the resulting network 
+     * */
+    $(function () {
+        var url = '/upload/basic/';
+        var csrftoken = $.cookie('csrftoken');
+        $('#fileupload').fileupload({
+            url: url,
+            crossDomain: false,
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            },
+            dataType: 'json',
+            add: function (e, data) {
+                //var loadplugin;
+                //$('#progress').show();
+                
+                $('#files').text( data.files[0].name );
+                                    $('.layout-selection').show();
+                                    $('.fileinput-button-nodes').show();
+                                    $('#directionOptions').show();
+
+
+                $('button#upload').show()
+                    .click(function () {
+                    
+                    
+                            //console.log( "node files" );
+                            //console.log( $('#fileupload-nodes')[0].files[0] );
+                            var direction = $("[name='directionOptions']:checked").val();
+                                    var directed = false;
+                                    if(direction == "Directed"){
+                                            directed = true;
+                                    }
+                    
+                              
+                            data.formData = {"layout-algorithm": $("#instructions .layout-selection button.dropdown-toggle").text(),
+                                                                    "nodefile": $('#fileupload-nodes')[0].files[0],
+                                                                    "is_directed": directed };
+                    
+                    
+                            $('#fileupload-div').switchClass("div-center", "div-left" );
+                                    $('#fileupload-div').show();
+
+                        $('div.layout-selection').hide();
+                        $('.fileinput-button-nodes').hide();
+                                    $('#directionOptions').hide();
+        
+                                    $('button#upload').hide();
+        
+                        data.submit();
+                        if (destroyFunction != null) {
+                            destroyFunction();
+                        }
+                        $('#loading-container').show();                     
+                    });
+            },
+            done: function (e, data) {
+
+                if(data.result.errors == null){ 
+                                  
+                    styleGraphLoaded();
+                    createGraph3D(data.result, getRenderData());
+                    globalData = data.result;           
+                }else{
+                    $('#loading-container').hide();
+                    $('#progress').hide();
+                    $('#error-container').show();
+                    $('#error-container').text( data.result.errors );
+                    $('#fileupload-div').switchClass("div-center", "div-left" );
+                            $('#fileupload-div').show();
+        
+                    setTimeout( function() {
+                        $('#error-container').hide(1000);
+                    }, 5000 );
+                        
+                }
+                        
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress .bar').css(
+                    'width',
+                    progress + '%'
+                );
+            }
+        }).prop('disabled', !$.support.fileInput)
+                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+    });
+
+
+
+            $('#fileupload-nodes').change(function(e){
+                    $('#files-nodes').text( $('#fileupload-nodes')[0].files[0].name );
+            })
+
+
+            $('#directionOption1').change(function(e){
+                    $(this).parent().addClass('active');
+                    $('#directionOption2').parent().removeClass('active');
+            })
+            $('#directionOption2').change(function(e){
+                    $(this).parent().addClass('active');
+                    $('#directionOption1').parent().removeClass('active');
+            })
+
+            /*
+            $('#layoutOption1').change(function(e){
+                    $(this).parent().addClass('active');
+                    $('#option2').parent().removeClass('active');
+            })
+            $('#layoutOption2').change(function(e){
+                    $(this).parent().addClass('active');
+                    $('#option1').parent().removeClass('active');
+            })
+
+
+            $('#cameraOption1').change(function(e){
+                    $(this).parent().addClass('active');
+                    $('#cameraOption2').parent().removeClass('active');
+            })
+            $('#cameraOption2').change(function(e){
+                    $(this).parent().addClass('active');
+                    $('#cameraOption1').parent().removeClass('active');
+            })
+            */
+
+            $("#instructions .layout-selection button.dropdown-toggle span").text("Choose layout algorithm");
+
+            function displayLayout(name){
+
+                    $("#instructions .layout-selection button.dropdown-toggle").text(name);
+
+
+            }
+
+
+            $(window).on("beforeunload", function() { 
+                    destroyFunction();
+            })
+
+            window.onbeforeunload = function(event) {
+            destroyFunction();
+            };
+
+
+
+    </script>
+
+</body>
+</html>

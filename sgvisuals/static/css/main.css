@@ -1,0 +1,381 @@
+
+* {
+    box-sizing: none !important;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    font: 14px courier;
+    overflow-x: hidden;
+}
+
+.disable-element {
+    pointer-events: none;
+    background-color: gray;
+    opacity: 0.5;
+}
+
+#graph-info {
+    position: absolute;
+    top: 0px;
+    left: 40%;
+    margin: 10px;
+    background-color: #ffffe0;
+    color: #333;
+    padding: 5px 10px;
+    display:none;
+}
+
+
+table#instructions button{
+    margin:10px 0 0 0 ;
+}
+
+table#instructions{
+
+}
+
+.infobox {
+    border-radius: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    padding: 10px;
+    width: 200px;
+}
+
+#options {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+}
+
+#slider {
+    min-width:65%;
+    height:15px;
+    float:right;
+    margin:3px 10px 5px 10px ;
+}              
+
+#slider-container {
+    position: fixed;
+    bottom: 3px;
+    right: 290px;
+    left: 150px;
+    z-index: 1000000;
+    min-width:60%;
+    height:30px;
+    background-color:transparent;
+    border: solid 1px #666;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    padding:5px;
+    display:none;
+}
+
+#slider-container table {}
+
+#info-container {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    z-index: 2000;
+    max-width:250px;
+    background-color:white;
+    border: solid 1px #666;
+    -moz-border-radius: 5px;
+    border-radius: 10px;
+    display:none;
+    padding:20px;
+}
+
+#info-container input {
+    border:0; color:black;/*#f6931f*/ 
+    font-weight:bold;width:70px;
+}
+
+#slider-container input {
+    width:170px;height:15px;float:left;
+    border:0; color:black;/*#f6931f*/ 
+    font-weight:bold;
+    text-align:center;
+}
+
+#info-container table {
+    width:100%;
+    border-collapse: collapse;
+}
+
+#info-container table td {
+    padding-top: .5em;
+}
+
+#info-container table td.right {
+    padding-left: .3em;
+}
+
+#loading-container {
+    position: fixed;
+    top: 100px;
+    left: 400px;
+    z-index: 1000000;
+    width:550px;
+    height:550px;
+    background-color:transparent;
+    display:none;
+}
+
+#error-container {
+    position: fixed;
+    top: 100px;
+    left: 400px;
+    z-index: 1000000;
+    width:250px;
+    height:auto;
+    padding:20px;
+    text-align:center;
+    color: #990000;
+    background-color:#ccc;
+    border: solid 1px #666;
+    -moz-border-radius: 5px;
+    border-radius: 10px;
+    display:none;
+}
+
+#fileupload-div {
+    position: absolute;
+    z-index: 100000;
+    max-width:270px;
+    height:auto;
+    background-color:transparent;
+    border: solid 1px #666;
+    -moz-border-radius: 5px;
+    border-radius: 10px;
+    padding:5px 10px 10px 10px;
+    display: none;
+}
+
+.div-left {
+    margin-top: 22px;
+    margin-left: 3px;
+}
+
+.div-center {
+    margin-top: 12%;
+    margin-left: 40%;
+}
+
+div#how {
+    position: absolute;
+    margin-top: 12%;
+    margin-left: 20px;
+    z-index: 100000;
+    max-width:300px;
+    height:auto;
+    background-color:white;
+    border: solid 1px #666;
+    -moz-border-radius: 5px;
+    border-radius: 10px;
+    padding:5px 20px 10px 20px;
+}
+
+div#how table {
+    margin-top:15px;
+}
+
+div#how table tr::before {
+    content: "•";
+    display: block;
+    position: relative;
+    max-width: 0px;
+    max-height: 0px;
+    left: -10px;
+    top: 0px;
+    color: #E22D42;
+}
+
+#how-it-works:hover {
+    color: #DA4F49;
+    cursor:pointer;
+}
+
+i#how:hover {
+    color: #DA4F49;
+    cursor:pointer;
+}
+
+div#how:hover {
+    cursor:pointer;
+}
+
+#progress {
+    width:100%;
+    background-color:white;
+    display:none;
+}
+
+.glyphicon-question:before {
+    content: "?";
+}
+
+.glyphicon-plus:before {
+    content: "+";
+}
+
+.glyphicon-x:before {
+    content: "x";
+}
+
+.glyphicon-upload:before {
+    content: "";
+}
+
+*:before, *:after {
+    box-sizing: border-box;
+}
+
+.glyphicon {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: "Glyphicons Halflings";
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.btn {
+    padding:4px 13px !important;
+}
+
+li {
+    line-height:1.2em;
+    list-style: outside none none;
+}
+
+#files {
+    min-height:15px;
+    float:left;
+    font-weight:bold;
+}
+
+#files-nodes {
+    min-height:15px;
+    float:left;
+    font-weight:bold;
+}
+
+#display-instructions {
+    display:none;
+    font-weight:bold;
+    width:60px;
+    position:absolute;
+}
+
+#display-instructions:hover {
+    color: #DA4F49;
+    cursor:pointer;
+}
+
+span.fileinput-button {
+    margin-top:10px;
+    width:100%;
+}
+
+#fileupload-div button {
+    width:100%;
+}
+
+input#nrcolor {
+    padding:5px;
+}
+
+input#nrcolor:hover {
+    cursor:pointer;
+}
+
+table {
+    table-layout: fixed;
+}
+
+td {
+    word-wrap:break-word;
+}
+
+div.ui-slide-handler {
+    background: #D43F3A !important;
+} 
+
+div.ui-widget-header {
+    background: #D43F3A !important;
+    border: none !important;
+} 
+
+#layout-container {
+    font-weight:bold;
+    background: white;
+    word-wrap: break-word;
+}
+
+#layout-container textarea {
+    font-weight:bold;
+    background: white;
+    height:auto;
+    resize: none;
+    overflow:auto;
+    width:100%;
+    border:none;
+}
+
+#selected-node-container {
+    font-weight:bold;
+    background: white;
+    word-wrap: break-word;
+}
+
+#selected-node-container textarea {
+    font-weight:bold;
+    background: white;
+    height:auto;
+    resize: none;
+    overflow:hidden;
+    width:100%;
+    border:none;
+    font-size:12px;
+    padding:5px;
+}
+
+#layoutOptions {
+    padding: 0px 25% 0px 27%
+}
+
+#url-container {
+    font-weight:bold;
+    background: white;
+    word-wrap: break-word;
+}
+
+#url-container textarea {
+    font-weight:bold;
+    background: white;
+    resize: none;
+    overflow:hidden;
+    width:100%;
+    border:none;
+    font-size:12px;
+    min-height:80px;
+    padding:5px;
+    text-indent: -93px;
+}
+
+#data-table th, #data-table td {
+    max-width: 200px;
+    min-width: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

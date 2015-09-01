@@ -1,4 +1,4 @@
-from sgvisuals import app
+from multinet import app
 
 
 if __name__ == '__main__':

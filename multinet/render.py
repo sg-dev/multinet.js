@@ -18,7 +18,7 @@ from datetime import datetime
 from datetime import timedelta
 from itertools import groupby
 
-from sgvisuals import VISUALIZATION_DIR
+from multinet import VISUALIZATION_DIR
 
 
 SUPPORTED_LAYOUTS = ['Fruchterman-Reingold','Kamada-Kawai', 'LGL', 'Random', 'Star']

@@ -1,8 +1,8 @@
 from flask import render_template
 from flask import jsonify
 
-from sgvisuals import app, VISUALIZATION_DIR
-from sgvisuals.render import graph_layout
+from multinet import app, VISUALIZATION_DIR
+from multinet.render import graph_layout
 
 
 @app.route('/')

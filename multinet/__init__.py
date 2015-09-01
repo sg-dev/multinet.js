@@ -11,4 +11,4 @@ VISUALIZATION_DIR = os.path.join(
 )
 
 
-import sgvisuals.views
+import multinet.views

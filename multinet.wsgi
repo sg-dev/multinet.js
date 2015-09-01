@@ -6,4 +6,4 @@ if PATH not in sys.path:
         sys.path.insert(0, PATH)
 
 
-from sgvisuals import app as application
+from multinet import app as application

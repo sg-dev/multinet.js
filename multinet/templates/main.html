@@ -736,16 +736,10 @@
      * Handle file uploads here. If the upload is successful, render the resulting network 
      * */
     $(function () {
-        var url = '/upload/basic/';
-        var csrftoken = $.cookie('csrftoken');
+        var url = '/upload/';
         $('#fileupload').fileupload({
             url: url,
             crossDomain: false,
-            beforeSend: function(xhr, settings) {
-                if (!csrfSafeMethod(settings.type)) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                }
-            },
             dataType: 'json',
             add: function (e, data) {
                 //var loadplugin;

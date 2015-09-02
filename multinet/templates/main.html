@@ -61,7 +61,7 @@
                     <span class="btn btn-success fileinput-button">
                         <i class="glyphicon glyphicon-plus"></i>
                         <span>Add edgelist</span>
-                        <input  id="fileupload" name="file" multiple="" type="file">
+                        <input  id="fileupload" name="file" type="file">
                     </span>
 
                     <div id="files" class="files"></div>
@@ -750,45 +750,36 @@
                                     $('.fileinput-button-nodes').show();
                                     $('#directionOptions').show();
 
+                $('button#upload').show().click(function () {
+                    var direction = $("[name='directionOptions']:checked").val();
+                    var directed = false;
+                    if(direction == "Directed"){
+                            directed = true;
+                    }
 
-                $('button#upload').show()
-                    .click(function () {
-                    
-                    
-                            //console.log( "node files" );
-                            //console.log( $('#fileupload-nodes')[0].files[0] );
-                            var direction = $("[name='directionOptions']:checked").val();
-                                    var directed = false;
-                                    if(direction == "Directed"){
-                                            directed = true;
-                                    }
-                    
-                              
-                            data.formData = {"layout-algorithm": $("#instructions .layout-selection button.dropdown-toggle").text(),
-                                                                    "nodefile": $('#fileupload-nodes')[0].files[0],
-                                                                    "is_directed": directed };
-                    
-                    
-                            $('#fileupload-div').switchClass("div-center", "div-left" );
-                                    $('#fileupload-div').show();
+                    data.formData = {"layout-algorithm": $("#instructions .layout-selection button.dropdown-toggle").text(),
+                                     "nodefile": $('#fileupload-nodes')[0].files[0],
+                                     "is_directed": directed };
 
-                        $('div.layout-selection').hide();
-                        $('.fileinput-button-nodes').hide();
-                                    $('#directionOptions').hide();
-        
-                                    $('button#upload').hide();
-        
-                        data.submit();
-                        if (destroyFunction != null) {
-                            destroyFunction();
-                        }
-                        $('#loading-container').show();                     
-                    });
+                    $('#fileupload-div').switchClass("div-center", "div-left" );
+                    $('#fileupload-div').show();
+
+                    $('div.layout-selection').hide();
+                    $('.fileinput-button-nodes').hide();
+                    $('#directionOptions').hide();
+
+                    $('button#upload').hide();
+
+                    data.submit();
+                    if (destroyFunction != null) {
+                        destroyFunction();
+                    }
+                    $('#loading-container').show();
+                });
             },
             done: function (e, data) {
 
                 if(data.result.errors == null){ 
-                                  
                     styleGraphLoaded();
                     createGraph3D(data.result, getRenderData());
                     globalData = data.result;           
@@ -799,13 +790,13 @@
                     $('#error-container').text( data.result.errors );
                     $('#fileupload-div').switchClass("div-center", "div-left" );
                             $('#fileupload-div').show();
-        
+
                     setTimeout( function() {
                         $('#error-container').hide(1000);
                     }, 5000 );
-                        
+
                 }
-                        
+
             },
             progressall: function (e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);

@@ -32,12 +32,21 @@ def allowed_file(filename):
 
 @app.route('/upload/', methods=['POST',])
 def upload_file():
-    file = request.files['file']
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
+    edge_file = request.files.get('file', None)
+    data_file = request.files.get('nodefile', None)
+    if edge_file and allowed_file(edge_file.filename):
+        filename = secure_filename(edge_file.filename)
         path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(path)
-        data = graph_layout(path, None)
-        return jsonify(**data)
+        edge_file.save(path)
+    else:
+        return jsonify(graph_ready=False, errors='Invalid file uploaded. Only .csv files are supported')
 
-    return jsonify(error='Invalid fileupload')
+    data_path = None
+    if data_file and allowed_file(data_file.filename):
+        filename = secure_filename(data_file.filename)
+        data_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        data_file.save(data_path)
+
+    data = graph_layout(path, data_path)
+    return jsonify(**data)
+

@@ -440,15 +440,12 @@
 
     var globalData;
     
-    
-    var currentPath = window.location.pathname;
     //check if this is a url specific for a visualization
-    //TODO: match pathname to regex rather than "share" 
-    if( currentPath.indexOf("share") > -1) { 
-    
+    {% if fetch_url is defined %}
         $('div#fileupload-div').hide(); 
         
-        $.ajax({url:currentPath,
+        $.ajax({
+            url: "{{ fetch_url }}",
             beforeSend:function(){
                 if (destroyFunction != null) {
                     destroyFunction();
@@ -461,13 +458,10 @@
                 globalData = data;
             }
         });
-     
-    }else{
-    
-             $('div#fileupload-div').show();
-    }
-    
-    
+    {% else %}
+         $('div#fileupload-div').show();
+    {% endif %}
+
     function styleGraphLoaded(){
             $('#loading-container').hide();
         $('div.layout-selection').hide();
@@ -487,7 +481,7 @@
     var cnt = 0;
 
     $("#samplevis-3layers").click(function(){
-            $.ajax({url:"{{ url_for('sample_data', dataset='politics_sample_2') }}",
+            $.ajax({url:"{{ url_for('data', typ='sample', dataset='politics_sample_2') }}",
             beforeSend:function(){
                 if (destroyFunction != null) {
                     destroyFunction();
@@ -513,7 +507,7 @@
     }); 
 
      $("#samplevis-2layers").click(function(){
-        $.ajax({url:"{{ url_for('sample_data', dataset='politics_sample_2l') }}",
+        $.ajax({url:"{{ url_for('data', typ='sample', dataset='politics_sample_2l') }}",
             beforeSend:function(){
                 if (destroyFunction != null) {
                     destroyFunction();

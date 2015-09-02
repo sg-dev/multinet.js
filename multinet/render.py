@@ -25,13 +25,17 @@ def generate_id(size=6, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 
-def get_cache_path(path):
+def get_hash(path):
     hasher = hashlib.md5()
     #check if a graph data object for this filename exists in the cache
     
     with open(path) as f:
         hasher.update(f.read())
-        return CACHE_PATH_TEMPLATE.format(hasher.hexdigest())
+        return hasher.hexdigest()
+
+
+def get_cache_path(path):
+    return CACHE_PATH_TEMPLATE.format(get_hash(path))
 
 
 def get_from_cache(path):

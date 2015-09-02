@@ -1,11 +1,12 @@
 import os
+import hashlib
 
 from flask import render_template, jsonify, Flask, request, redirect, url_for
 
 from werkzeug import secure_filename
 
 from multinet import app, VISUALIZATION_DIR
-from multinet.render import graph_layout
+from multinet.render import graph_layout, get_hash
 
 
 ALLOWED_EXTENSIONS = set(['csv',])
@@ -16,23 +17,27 @@ def main():
     return render_template('main.html')
 
 
-@app.route('/sample/<dataset>')
-def sample_data(dataset):
-    filename = "%s/%s.csv" % ( VISUALIZATION_DIR, dataset)  
-    nd_filename = "%s/%s_node_data.csv" % ( VISUALIZATION_DIR, dataset)
-    data = graph_layout(filename, nd_filename) 
-
-    return jsonify(url=url_for('sample_data', dataset=dataset), **data)
+@app.route('/share/<dataset>/')
+@app.route('/share/<dataset>/<hash>/')
+def share(dataset, hash=None):
+    return render_template('main.html', fetch_url=url_for('data', dataset=dataset, hash=hash))
 
 
-@app.route('/uploaded/<dataset>')
-def uploaded_graph(dataset):
+@app.route('/data/<dataset>/')
+@app.route('/data/<dataset>/<hash>/')
+def data(dataset, hash=None):
+    if hash:
+        base_path = app.config['UPLOAD_FOLDER']
+        dataset = '{}_{}'.format(dataset, hash)
+    else:
+        base_path = VISUALIZATION_DIR
+
     data = graph_layout(
-        os.path.join(app.config['UPLOAD_FOLDER'], '{}.csv'.format(dataset)),
-        os.path.join(app.config['UPLOAD_FOLDER'], '{}_node_data.csv'.format(dataset))
+        os.path.join(base_path, '{}.csv'.format(dataset)),
+        os.path.join(base_path, '{}_node_data.csv'.format(dataset))
     )
-    return jsonify(**data)
 
+    return jsonify(url=url_for('share', dataset=dataset, hash=hash), **data)
 
 
 def allowed_file(filename):
@@ -46,7 +51,12 @@ def upload_file():
     data_file = request.files.get('nodefile', None)
     if edge_file and allowed_file(edge_file.filename):
         filename = secure_filename(edge_file.filename)
-        dataset = filename.rsplit('.', 1)[1]
+        hasher = hashlib.md5()
+        hasher.update(edge_file.stream.read())
+        hash = hasher.hexdigest()
+        dataset = filename.rsplit('.', 1)[0]
+        filename = '{}_{}.csv'.format(dataset, hash)
+        edge_file.stream.seek(0)
         path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         edge_file.save(path)
     else:
@@ -54,9 +64,9 @@ def upload_file():
 
     data_path = None
     if data_file and allowed_file(data_file.filename):
-        data_path = os.path.join(app.config['UPLOAD_FOLDER'], '{}_node_data.csv')
+        data_path = os.path.join(app.config['UPLOAD_FOLDER'], '{}_{}_node_data.csv'.format(dataset, hash))
         data_file.save(data_path)
 
     data = graph_layout(path, data_path)
-    return jsonify(url=url_for('uploaded_graph', dataset=dataset), **data)
+    return jsonify(url=url_for('share', dataset=dataset, hash=hash), **data)
 

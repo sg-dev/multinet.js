@@ -22,34 +22,41 @@ from multinet import VISUALIZATION_DIR
 
 
 SUPPORTED_LAYOUTS = ['Fruchterman-Reingold','Kamada-Kawai', 'LGL', 'Random', 'Star']
+CACHE_PATH_TEMPLATE = '/tmp/multinet_{}.cpickle'
 
 
 def generate_id(size=6, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 
-def graph_layout(filename, node_data_filename, sample=False, ly_alg = "fruchterman-reingold", directed_graph=True):
+def get_cache_path(path):
     hasher = hashlib.md5()
-
     #check if a graph data object for this filename exists in the cache
-    if sample:
-        filestr = filename.replace(  VISUALIZATION_DIR, "" )
-    else:
-        filestr = "%s.%s" % ( filename,  int( time.time() ) )
-        filestr = filestr.replace(  VISUALIZATION_DIR, "" )
     
-    hasher.update(filestr)
-    pfile = "/tmp/edges_numpy_{}.cpickle".format(hasher.hexdigest())
-        
+    with open(path) as f:
+        hasher.update(f.read())
+        return CACHE_PATH_TEMPLATE.format(hasher.hexdigest())
+
+
+def get_from_cache(path):
     try:
-        f = open(pfile,"rb")
-        data = cPickle.load(f)
-        f.close()
-        return data
-    
-    except Exception,e:
-        print e
-        pass
+        with open(get_cache_path(path), 'rb') as f:
+            return cPickle.load(f)
+    except:
+        return None
+
+
+def cache_data(path, data):
+    with open(get_cache_path(path), 'wb') as f:
+        cPickle.dump(data, f, protocol=2)
+
+
+def graph_layout(filename, node_data_filename, sample=False, ly_alg = "fruchterman-reingold", directed_graph=True):
+
+    cached_data = get_from_cache(filename)
+
+    if cached_data:
+        return cached_data
 
     #read the uploaded file 
     _path = filename
@@ -73,6 +80,7 @@ def graph_layout(filename, node_data_filename, sample=False, ly_alg = "fruchterm
     data_labels = []
     node_data = {}
     try:
+
         if _nd_path:
                 
             with open(_nd_path) as csvfile:
@@ -171,7 +179,6 @@ def graph_layout(filename, node_data_filename, sample=False, ly_alg = "fruchterm
         print "VIZUALISATION TIMER: igraph layouting :",datetime.now() 
         #read from tmp file
         ly_start = datetime.now()
-
         graph = igraph.Graph.Read( tmp_name , directed=True,format="ncol",weights=False )
 
         #new layouting by rcattano
@@ -323,11 +330,8 @@ def graph_layout(filename, node_data_filename, sample=False, ly_alg = "fruchterm
 
         data = dict(data)
 
-        f = open(pfile,"wb")
-        cPickle.dump(data, f, protocol=2)
-        f.close()
+        cache_data(filename, data)
 
-                
         return data
 
     except Exception,e:

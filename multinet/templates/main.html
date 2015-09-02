@@ -626,21 +626,23 @@
     });
 
     function redrawGraph(createFn) {
-         $('#fileupload-div').switchClass("div-center", "div-left" );
-         $('#fileupload-div').show();
-         $('#loading-container').show();
-         $('#container').hide();
+        $('#info-container').addClass('disable-element');
 
-         if (destroyFunction != null) {
-                destroyFunction();
-         }
+        $('#fileupload-div').switchClass("div-center", "div-left" );
+        $('#fileupload-div').show();
+        $('#loading-container').show();
+        $('#container').hide();
+
+        if (destroyFunction != null) {
+            destroyFunction();
+        }
 
         window.setTimeout(function() {
             createFn();
             $('#loading-container').hide();
             $('#container').show();
+            $('#info-container').removeClass('disable-element');
         }, 10);
-   
     }
 
     $('#take-snapshot').click(function(e) {

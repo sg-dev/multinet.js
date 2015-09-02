@@ -300,7 +300,6 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
         data['layer_ct'] = len(data)
         data['max_node_ct'] = max_node_ct
         data['unique_keys'] = unique_keys
-        data['url'] = 'foo' # TODO reverse('visuals_external', args=[ base64.b64encode( filestr ) ])
         data['width'] = ly_width   
         data['width2'] = width2
         data['layout'] = ly_alg

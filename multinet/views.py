@@ -17,12 +17,22 @@ def main():
 
 
 @app.route('/sample/<dataset>')
-def sample_visuals_np(dataset):
-        filename = "%s/%s.csv" % ( VISUALIZATION_DIR, dataset)  
-        nd_filename = "%s/%s_node_data.csv" % ( VISUALIZATION_DIR, dataset)
-        data = graph_layout(filename, nd_filename) 
+def sample_data(dataset):
+    filename = "%s/%s.csv" % ( VISUALIZATION_DIR, dataset)  
+    nd_filename = "%s/%s_node_data.csv" % ( VISUALIZATION_DIR, dataset)
+    data = graph_layout(filename, nd_filename) 
 
-        return jsonify(**data)
+    return jsonify(url=url_for('sample_data', dataset=dataset), **data)
+
+
+@app.route('/uploaded/<dataset>')
+def uploaded_graph(dataset):
+    data = graph_layout(
+        os.path.join(app.config['UPLOAD_FOLDER'], '{}.csv'.format(dataset)),
+        os.path.join(app.config['UPLOAD_FOLDER'], '{}_node_data.csv'.format(dataset))
+    )
+    return jsonify(**data)
+
 
 
 def allowed_file(filename):
@@ -36,6 +46,7 @@ def upload_file():
     data_file = request.files.get('nodefile', None)
     if edge_file and allowed_file(edge_file.filename):
         filename = secure_filename(edge_file.filename)
+        dataset = filename.rsplit('.', 1)[1]
         path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         edge_file.save(path)
     else:
@@ -43,10 +54,9 @@ def upload_file():
 
     data_path = None
     if data_file and allowed_file(data_file.filename):
-        filename = secure_filename(data_file.filename)
-        data_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        data_path = os.path.join(app.config['UPLOAD_FOLDER'], '{}_node_data.csv')
         data_file.save(data_path)
 
     data = graph_layout(path, data_path)
-    return jsonify(**data)
+    return jsonify(url=url_for('uploaded_graph', dataset=dataset), **data)
 

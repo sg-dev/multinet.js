@@ -487,7 +487,7 @@
     var cnt = 0;
 
     $("#samplevis-3layers").click(function(){
-        $.ajax({url:"/sample/politics_sample_2",
+            $.ajax({url:"{{ url_for('sample_data', dataset='politics_sample_2') }}",
             beforeSend:function(){
                 if (destroyFunction != null) {
                     destroyFunction();
@@ -513,7 +513,7 @@
     }); 
 
      $("#samplevis-2layers").click(function(){
-        $.ajax({url:"/sgvisuals/sample-np/politics_sample_2l", //"pacs_89_sample_multi/",
+        $.ajax({url:"{{ url_for('sample_data', dataset='politics_sample_2l') }}",
             beforeSend:function(){
                 if (destroyFunction != null) {
                     destroyFunction();
@@ -736,7 +736,7 @@
      * Handle file uploads here. If the upload is successful, render the resulting network 
      * */
     $(function () {
-        var url = '/upload/';
+        var url = "{{ url_for('upload_file') }}";
         $('#fileupload').fileupload({
             url: url,
             crossDomain: false,

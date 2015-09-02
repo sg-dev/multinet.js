@@ -1,5 +1,5 @@
 flask
 numpy
 matplotlib
-igraph
+python-igraph
 graphlayout

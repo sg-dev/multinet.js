@@ -556,10 +556,6 @@
     $('div#how').click(function(){
         $('#how').hide(400); //slideUp(1000);
     }); 
-    
-    
-    
-    
 
     $('#layoutOptions').change(function(e) {
        e.preventDefault();
@@ -591,7 +587,6 @@
      });
      
      $('#degreeOptions').change(function(e) {
-       e.preventDefault();
        $("[name='degreeOptions']").parent().removeClass("active");
        var selection = $("[name='degreeOptions']:checked").val();
 
@@ -611,47 +606,24 @@
         redrawGraph(fun);
      });  
 
-
-
-              $('#cameraOption1').change(function(e){
-
-            var renderData = getRenderData();
-                            if( renderData.currentCamera != "Perspective" ){
-                    renderData.usePerspectiveCamera( renderData.camera.position );
-            }
-                            $(this).parent().addClass("active");
-            $("#cameraOption2").parent().removeClass("active");
-            renderData.render();
-              });
-              $('#cameraOption2').change(function(e){
-
-            var renderData = getRenderData();
-            if( renderData.currentCamera != "Ortographic"){
-                    renderData.useOrthographicCamera( renderData.camera.position );
-            }
-                            $(this).parent().addClass("active");
-            $("#cameraOption1").parent().removeClass("active");
-            renderData.render();
-              });
-
-              /*
-      $('#cameraOptions').change(function(e) {
-        e.preventDefault();
+    $('#cameraOption1').change(function(e){
         $("[name='cameraOptions']").parent().removeClass("active");
-        var selection = $("[name='cameraOptions']:checked").val();
         var renderData = getRenderData();
-
-        if (selection === "Perspective") {
-            //perspective camera
+        if( renderData.currentCamera != "Perspective" ){
             renderData.usePerspectiveCamera( renderData.camera.position );
-        } else {
-            //orthographic camera
+        }
+
+        renderData.render();
+    });
+
+    $('#cameraOption2').change(function(e){
+        $("[name='cameraOptions']").parent().removeClass("active");
+        var renderData = getRenderData();
+        if( renderData.currentCamera != "Ortographic"){
             renderData.useOrthographicCamera( renderData.camera.position );
         }
-                            
         renderData.render();
-     });
-     */
+    });
 
     function redrawGraph(createFn) {
          $('#fileupload-div').switchClass("div-center", "div-left" );

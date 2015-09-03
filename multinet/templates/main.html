@@ -168,7 +168,7 @@
 
     <div id="graph-info"></div>
 
-    <div id="slider-container">
+    <div id="slider-container" style="display: none;">
         <input type="text" id="year" readonly>
         <div id="slider" style="float:right;"></div>
     </div>
@@ -582,8 +582,8 @@
         redrawGraph(fun);
      });
 
-     $('#degreeOptions').change(function(e) {
-       var selection = $("[name='degreeOptions']:checked").val();
+    $('#degreeOptions').change(function(e) {
+        var selection = $("[name='degreeOptions']:checked").val();
 
         if (selection === "indegree") {
             fun = function() {
@@ -605,11 +605,7 @@
             };           
         }
         redrawGraph(fun);
-        if (selection === "indegree") {
-        } else {
-        }
- 
-     });  
+    });
 
     $('#cameraOption1').change(function(e){
         var renderData = getRenderData();

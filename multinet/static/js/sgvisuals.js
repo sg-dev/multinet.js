@@ -281,11 +281,9 @@ function displayEdgesInitial(keys, graphData, scene) {
                     } else if ( dir.y < - 0.99999 ) {
                         cone.quaternion.set( 1, 0, 0, 0 );
                     } else {
-
                         axis.set( dir.z, 0, - dir.x ).normalize();
                         radians = Math.acos( dir.y );
                         cone.quaternion.setFromAxisAngle( axis, radians );
-
                     }
 
                     cone.updateMatrix();
@@ -296,6 +294,7 @@ function displayEdgesInitial(keys, graphData, scene) {
             }
         });
 
+        starts.push({edges: verts.length, arrows: a_indices.length});
         graphData.layer_starts.push(starts);
 
         var positions = new Float32Array( verts.length * 3 );
@@ -559,7 +558,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
       }
     }
 
-    console.log(graphData.node_data_list.length);
     if (graphData.node_data_list.length > 0) {
         $('#table-button').css("display", "block");
     }
@@ -576,6 +574,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
     destroyFunction = function() {
         $('#table-button').css("display", "none");
+        $('#slider-container').css('display', 'none');
         clearHighlightedObjects(renderData, graphData);
 
         if (graphData.layer_lines.length == 0) {
@@ -641,7 +640,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
     displayEdgesInitial(data.unique_keys, graphData, renderData.scene);
 
-    displayEdges(0, data.unique_keys.length-1, graphData, renderData.scene);
+    displayEdges(0, data.unique_keys.length, graphData, renderData.scene);
 
     for (var i=0; i < graphData.vertices_geom.length; i++) {
         graphData.vertices_mesh.push(addGeomentry(graphData.vertices_geom[i], graphData.vertexMaterial, renderData.scene));
@@ -796,7 +795,10 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
 
     $("#info-container").slideDown();
-    $("#slider-container").show();
+
+    if (data.unique_keys.length > 1) {
+        $("#slider-container").show();
+    }
 
     $('#nrcolor').colorpicker({ horizontal: true });
     $('#nrcolor').colorpicker().on('changeColor.colorpicker', function(event) {
@@ -1024,7 +1026,6 @@ function highlightNeighbors(neighborhood_geometry, highlight_geom, graphData, no
     var nodes = graphData.layer_nodes[layer_id];
 
     // highlight neighboring nodes and edges in the layer of the selected node
-    console.log(layer_id);
     $.each(graphData.layers[layer_id].neighborhood[node_id], function(i, obj) {
         if (!(obj[0] in nodes) || !(obj[1] in graphData.selected_timestamps)) {
             return;

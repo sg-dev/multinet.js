@@ -68,7 +68,6 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
     max_node_ct = 0
 
     unique_ct = lambda arg1: len(set(arg1))  
-    date_format = "%Y-%m-%d"
 
     #dictionary to hold all data for each layer:
     data = collections.OrderedDict()
@@ -88,11 +87,19 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
                 for row in reader:
                     node_data[row[0]] = row[1:]
 
+        with open(_path) as f:
+            reader = csv.reader(f, delimiter=';')
+            if len(reader.next()) == 3:
+                edges_type = edges_type[:3]
         edges = np.loadtxt( open(_path, 'rb'), delimiter=';',  skiprows = 1, dtype = edges_type )
+        if len(edges_type) == 3:
+            timestamps = len(edges["layer"]) * ['01-01-2015']
+        else:
+            timestamps = edges["timestamp"]
         layers_str = [ "l%s" % ( layer, ) for layer in set( edges["layer"] ) ] 
         layers = sorted([ "%s" % ( layer, ) for layer in set( edges["layer"] ) ])
 
-        unique_keys = sorted( list( set(  edges["timestamp"] ) ) ) 
+        unique_keys = sorted( list( set(  timestamps ) ) ) 
 
         if len(unique_keys) < 100:
             nrbins = len(unique_keys)
@@ -103,16 +110,16 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
         bins = np.linspace(1, len(unique_keys), nrbins)
 
         keys_indices = dict( zip( unique_keys,  [ i for i in range(1,len(unique_keys) + 1 ) ] ) )
-        timestamp_indices =  [ keys_indices[_ts] for _ts in edges['timestamp'] ]
+        timestamp_indices =  [ keys_indices[_ts] for _ts in timestamps ]
 
         #detect which timestamps to be replaced according to the binned indices array
         new_indices = np.digitize( timestamp_indices,bins )
-        indices_keys = dict(  zip( new_indices, edges['timestamp'] ) )
-        keys_indices = dict(  zip( edges['timestamp'], new_indices ) )
+        indices_keys = dict(  zip( new_indices, timestamps ) )
+        keys_indices = dict(  zip( timestamps, new_indices ) )
 
         keys_replace = {}
 
-        for _ind, _ts in enumerate( edges["timestamp"] ):
+        for _ind, _ts in enumerate( timestamps ):
             try:
                 _key = keys_indices[_ts] 
                 _replace_ts = indices_keys[_key] 
@@ -121,10 +128,10 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
                 print e
 
         for _ind,_replace_ts in keys_replace.iteritems():
-            edges["timestamp"][_ind] = _replace_ts
+            timestamps[_ind] = _replace_ts
 
         #now we have 10% of the initial keys ..
-        unique_keys = sorted( list( set(  edges["timestamp"] ) ) )
+        unique_keys = sorted( list( set(  timestamps ) ) )
 
         for layer in layers:
             _layer_str = "l%s" % (layer,)
@@ -134,7 +141,13 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
             _layer_data = {}
 
             edges_tmp = edges[edges["layer"] == layer]
-            _edges = np.column_stack( ( edges_tmp["from"], edges_tmp["to"], edges_tmp["timestamp"] ) ).tolist()
+
+            if len(edges_type) == 3:
+                timestamps_tmp = len(edges_tmp["layer"]) * ['00-00-2000']
+            else:
+                timestamps_tmp = edges_tmp["timestamp"]
+
+            _edges = np.column_stack( ( edges_tmp["from"], edges_tmp["to"], timestamps_tmp ) ).tolist()
             _in_degrees = dict( matplotlib.mlab.rec_groupby(edges_tmp, ('to',), (('from', unique_ct ,'indeg'),)) )
             _nodes = np.append( edges_tmp["from"], edges_tmp["to"]  ).tolist() 
             _out_degrees = {n: len(list(group)) for n, group in groupby(sorted(edges_tmp["from"]))}

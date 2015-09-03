@@ -9,7 +9,7 @@
     <script src="https://handsontable.com//bower_components/handsontable/dist/handsontable.full.min.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
 
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}">
 
     <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
@@ -101,10 +101,10 @@
                 <td>
                     <div id="directionOptions" class="btn-group" data-toggle="buttons" style="display:none; margin-top:10px;">
                       <label class="btn btn-primary active">
-                                    <input type="radio" name="directionOptions" id="directionOption1" value="Directed" autocomplete="off" checked> Directed
+                                    <button name="directionOptions" id="directionOption1" value="Directed" autocomplete="off"> Directed
                       </label>
                       <label class="btn btn-primary">
-                                    <input type="radio" name="directionOptions" id="directionOption2" value="Undirected" autocomplete="off"> Undirected
+                                    <button name="directionOptions" id="directionOption2" value="Undirected" autocomplete="off"> Undirected
                       </label>
                     </div>
                 </td>
@@ -197,15 +197,15 @@
                     </div>
                 </td>
             </tr>
-        
+
             <tr>
                 <td colspan="2">
                     <div id="layoutOptions" class="btn-group" data-toggle="buttons">
                       <label class="btn btn-primary active">
-                        <input type="radio" name="layoutOptions" id="option1" value="3D" autocomplete="off" checked> 3D
+                        <input type="radio" name="layoutOptions" id="layoutOption1" value="3D" autocomplete="off" checked> 3D
                       </label>
                       <label class="btn btn-primary">
-                        <input type="radio" name="layoutOptions" id="option2" value="2D" autocomplete="off"> 2D
+                        <input type="radio" name="layoutOptions" id="layoutOption2" value="2D" autocomplete="off"> 2D
                       </label>
                     </div>
 
@@ -216,10 +216,10 @@
                 <td colspan="2">
                     <div id="degreeOptions" class="btn-group" data-toggle="buttons">
                       <label class="btn btn-primary active">
-                        <input type="radio" name="degreeOptions" id="option1" value="indegree" autocomplete="off" checked> In degree
+                        <input type="radio" name="degreeOptions" id="degreeOption1" value="indegree" autocomplete="off" checked> In degree
                       </label>
                       <label class="btn btn-primary">
-                        <input type="radio" name="degreeOptions" id="option2" value="outdegree" autocomplete="off"> Out degree
+                        <input type="radio" name="degreeOptions" id="degreeOption2" value="outdegree" autocomplete="off"> Out degree
                       </label>
                     </div>
 
@@ -558,11 +558,9 @@
     }); 
 
     $('#layoutOptions').change(function(e) {
-       e.preventDefault();
-       $("[name='layoutOptions']").parent().removeClass("active");
        var selection = $("[name='layoutOptions']:checked").val();
 
-        if (selection === "3D") {
+        if (selection == "3D") {
             $('#cameraOptions label').removeClass('disabled');
             $("#distanceSlider").slider('enable');
             fun = function() {
@@ -585,9 +583,8 @@
         }
         redrawGraph(fun);
      });
-     
+
      $('#degreeOptions').change(function(e) {
-       $("[name='degreeOptions']").parent().removeClass("active");
        var selection = $("[name='degreeOptions']:checked").val();
 
         if (selection === "indegree") {
@@ -604,10 +601,13 @@
             };
         }
         redrawGraph(fun);
+        if (selection === "indegree") {
+        } else {
+        }
+ 
      });  
 
     $('#cameraOption1').change(function(e){
-        $("[name='cameraOptions']").parent().removeClass("active");
         var renderData = getRenderData();
         if( renderData.currentCamera != "Perspective" ){
             renderData.usePerspectiveCamera( renderData.camera.position );
@@ -617,7 +617,6 @@
     });
 
     $('#cameraOption2').change(function(e){
-        $("[name='cameraOptions']").parent().removeClass("active");
         var renderData = getRenderData();
         if( renderData.currentCamera != "Ortographic"){
             renderData.useOrthographicCamera( renderData.camera.position );
@@ -671,7 +670,6 @@
 
 
     });
-
 
     /*
      * URL to clipboard copying using ZeroClipboard.js
@@ -777,63 +775,24 @@
                     .parent().addClass($.support.fileInput ? undefined : 'disabled');
     });
 
-
-
             $('#fileupload-nodes').change(function(e){
                     $('#files-nodes').text( $('#fileupload-nodes')[0].files[0].name );
             })
 
 
-            $('#directionOption1').change(function(e){
-                    $(this).parent().addClass('active');
-                    $('#directionOption2').parent().removeClass('active');
-            })
-            $('#directionOption2').change(function(e){
-                    $(this).parent().addClass('active');
-                    $('#directionOption1').parent().removeClass('active');
-            })
-
-            /*
-            $('#layoutOption1').change(function(e){
-                    $(this).parent().addClass('active');
-                    $('#option2').parent().removeClass('active');
-            })
-            $('#layoutOption2').change(function(e){
-                    $(this).parent().addClass('active');
-                    $('#option1').parent().removeClass('active');
-            })
-
-
-            $('#cameraOption1').change(function(e){
-                    $(this).parent().addClass('active');
-                    $('#cameraOption2').parent().removeClass('active');
-            })
-            $('#cameraOption2').change(function(e){
-                    $(this).parent().addClass('active');
-                    $('#cameraOption1').parent().removeClass('active');
-            })
-            */
-
             $("#instructions .layout-selection button.dropdown-toggle span").text("Choose layout algorithm");
 
             function displayLayout(name){
-
                     $("#instructions .layout-selection button.dropdown-toggle").text(name);
-
-
             }
-
 
             $(window).on("beforeunload", function() { 
                     destroyFunction();
             })
 
             window.onbeforeunload = function(event) {
-            destroyFunction();
+                destroyFunction();
             };
-
-
-
     </script>
 
 </body>

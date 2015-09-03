@@ -348,9 +348,6 @@ function from_mesh(mesh, positions, indices) {
 }
 
 function displayEdges(start, end, graphData, scene) {
-        console.log( "graphData" );
-        console.log(graphData);
-        
      for (var i=0; i < graphData.edge_coordinates.length; i++) {  
         var bg = graphData.layer_lines[i].geometry;
         bg.drawcalls.splice(0, 1);
@@ -621,7 +618,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
     var node_cnt = 0;
 
-    console.log("len", graphData.layer_nodes.length);
     for (var i = 0; i < data.layer_ct; i++) {
         graphData.layer_nodes.push({});
         // NOTE: when changing y here, make sure to change it in transfromTo3D as well
@@ -653,7 +649,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     function updateSlider(i, j) {
         $("#year").val( data.unique_keys[i].toString() + " - " + data.unique_keys[j].toString() );
         var selected_ts = data.unique_keys.slice( i, j )                    
-        //console.log(selected_ts);
         displayEdges(i, j, graphData, renderData.scene);
         graphData.selected_timestamps = {};
         $.each(selected_ts, function(i, obj) {
@@ -678,7 +673,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     function updateLayerDistance(dist) {
         clearHighlightedObjects(renderData, graphData);
 
-        console.log("update from to", graphData.y_range, dist);
         var base_pos = -dist;
 
         // Update y coordinate for meshes and layer_node mapping.
@@ -733,8 +727,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
             range: false,
             slide: function( event, ui ) {
                 var i = ui.value; 
-                //console.log(ui.values);
-                //var j = ui.values[ 1 ];
                 updateLayerDistance( i );
             }
     });
@@ -756,7 +748,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     }
 
     displayLayerInfo = function(id) {
-        console.log(id, graphData.layer_info);
         graphData.layer_index = id;
         $("#info-container .layer-selection button.dropdown-toggle").text("Layer "+(id+1));
         //console.log($("#info-container .layer-selection button.dropdown-toggle"));
@@ -798,7 +789,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     $('#nrcolor').colorpicker().on('changeColor.colorpicker', function(event) {
         var hexStr = event.color.toHex();
         $("#nrcolor").css('background-color', hexStr);
-        //console.log(graphData.layer_index, graphData.layer_lines,graphData.layer_lines[graphData.layer_index] );
         graphData.layer_lines[graphData.layer_index].material.color.setHex(parseInt(hexStr.slice(1, hexStr.length), 16));
         graphData.layer_cones[graphData.layer_index].material.color.setHex(parseInt(hexStr.slice(1, hexStr.length), 16));
         renderData.render();
@@ -869,14 +859,14 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
         } , round*(400/mult) )
 
     });
-    
+
     $('#graph-replay-pause').click(function(e) {
-        
+
         clearInterval( playLoop );
 
         var values = $("#slider").slider( "option", "values" );
         console.log("paused:", values);
-        
+
         $('.graph-replay-buttons').hide();
         $('#graph-replay-continue').show();
     });

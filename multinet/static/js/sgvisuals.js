@@ -976,7 +976,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
                         if (row[0] in graphData.layer_nodes[i]) {
                             clearHighlightedObjects(renderData, graphData);
                             highlightNode(graphData, renderData, graphData.layer_nodes[i][row[0]].mesh);
-                            console.log("Highlight");
                             break;
                         }
                     }
@@ -1020,6 +1019,7 @@ function highlightNeighbors(neighborhood_geometry, highlight_geom, graphData, no
     var nodes = graphData.layer_nodes[layer_id];
 
     // highlight neighboring nodes and edges in the layer of the selected node
+    console.log(layer_id);
     $.each(graphData.layers[layer_id].neighborhood[node_id], function(i, obj) {
         if (!(obj[0] in nodes) || !(obj[1] in graphData.selected_timestamps)) {
             return;
@@ -1036,7 +1036,10 @@ function highlightNeighbors(neighborhood_geometry, highlight_geom, graphData, no
 
 function showPopup(x, y, data, labels) {
     var table = '<table class="table table-striped" style="margin-bottom: 0 !important;">';
-    console.log(labels)
+    if (labels.length == 0) {
+        return;
+    }
+
     $.each(data, function(i, obj) {
         table += '<tr>\n<td>'+labels[i]+'</td>\n<td>'+obj+'</td></tr>';
     });
@@ -1055,7 +1058,7 @@ function showPopup(x, y, data, labels) {
     if ((boxX + boxWidth) > viewportWidth) {
         boxX = boxX - boxWidth - 40;
     }
- 
+
     $("#popup").css("position", "absolute")
         .css("left", boxX)
         .css("top", boxY)
@@ -1125,7 +1128,6 @@ function makeOnMouseDownHandler(renderData, graphData) {
             $("#clear-selection-tr").css("display", "");
             var selected_node = nearest_intersection.object;
 
-            console.log("GD", graphData.data_labels)
             showPopup(event.clientX, event.clientY, graphData.node_data[selected_node.node_id], graphData.data_labels);
 
             update_scene = true;

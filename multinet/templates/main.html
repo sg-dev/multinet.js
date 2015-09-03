@@ -176,7 +176,7 @@
     </div>
 
     <div id="data-table" style="position: fixed; width: 400px; float: left; margin-bottom: 50px; margin-top: 50px; margin-right: 40px; overflow: auto; height: 800px; display: none;"></div>
-    <div id="table-button" style="position: fixed; bottom: 3px; float:left;">
+    <div id="table-button" style="position: fixed; bottom: 3px; float:left; display: none;">
         <a id="show-table" href="#">Show table</a>
         <a id="hide-table" style="display: none;" href="#">Hide table</a>
     </div>
@@ -220,6 +220,9 @@
                       </label>
                       <label class="btn btn-primary">
                         <input type="radio" name="degreeOptions" id="degreeOption2" value="outdegree" autocomplete="off"> Out degree
+                      </label>
+                      <label class="btn btn-primary">
+                        <input type="radio" name="degreeOptions" id="degreeOption3" value="totaldegree" autocomplete="off"> Total degree
                       </label>
                     </div>
 
@@ -463,20 +466,16 @@
     {% endif %}
 
     function styleGraphLoaded(){
-            $('#loading-container').hide();
+        $('#loading-container').hide();
         $('div.layout-selection').hide();
-        
-        
+
         $('button#upload').hide();
-        
-                    $('#fileupload-div').switchClass("div-center", "div-left" );     
+
+        $('#fileupload-div').switchClass("div-center", "div-left" );     
         $('#fileupload-div').slideUp(1000);
-        
+
         $('#display-instructions').show();
-    
     }
-    
-    
 
     var cnt = 0;
 
@@ -544,8 +543,7 @@
         }
 
     }); 
-    
-    
+
     $('td#how-it-works').click(function(){
         $('#how').show(400); //slideUp(1000);
     }); 
@@ -593,12 +591,18 @@
                     return v[2];
                 });
             };
-        } else {
+        } else if (selection =='outdegree') {
             fun = function() {
                 createGraph3D(globalData, getRenderData(), function(v) {
                     return v[3];
                 });
             };
+        } else {
+             fun = function() {
+                createGraph3D(globalData, getRenderData(), function(v) {
+                    return v[4];
+                });
+            };           
         }
         redrawGraph(fun);
         if (selection === "indegree") {

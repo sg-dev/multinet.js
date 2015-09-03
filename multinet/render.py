@@ -27,8 +27,7 @@ def generate_id(size=6, chars=string.ascii_lowercase + string.digits):
 
 def get_hash(path):
     hasher = hashlib.md5()
-    #check if a graph data object for this filename exists in the cache
-    
+
     with open(path) as f:
         hasher.update(f.read())
         return hasher.hexdigest()
@@ -258,6 +257,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
             #indegs = _layer_data.in_degrees
             max_in_deg = 0
             max_out_deg = 0
+            max_total_deg = 0
             nodes1 = _layer_data['nodes']
             nodes2 = _layer_data_next['nodes']
             indegs = _layer_data['in_degrees']
@@ -274,10 +274,11 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
                 except Exception,e:
                     indeg = 0
                     outdeg = 0
-                coords[node_id] = [ all_coords[ node_id ], _common, indeg, outdeg ] 
+                coords[node_id] = [ all_coords[ node_id ], _common, indeg, outdeg, indeg + outdeg ] 
                 
                 max_out_deg = max(max_out_deg, outdeg)
                 max_in_deg = max(max_in_deg, indeg)
+                max_total_deg = max(max_total_deg, outdeg + indeg)
             #possible with namedtuples
             #_layer_data.coords = coords
 
@@ -285,7 +286,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
 
             # add dummy 0 values, so max_in_degree and max_out_degree have to 
             # same offset as the node's degrees
-            _layer_data['maxDeg'] = [0, 0, max_in_deg, max_out_deg] 
+            _layer_data['maxDeg'] = [0, 0, max_in_deg, max_out_deg, max_total_deg] 
 
             if directed_graph:
                 get_key = lambda v1, v2: ''.join([v1, v2])

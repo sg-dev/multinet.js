@@ -552,6 +552,18 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     graphData.node_data = data.node_data;
     graphData.data_labels = data.data_labels;
 
+    graphData.node_data_list = [];
+    for (var key in graphData.node_data) {
+      if (graphData.node_data.hasOwnProperty(key)) {
+        graphData.node_data_list.push([key, graphData.node_data[key]]);
+      }
+    }
+
+    console.log(graphData.node_data_list.length);
+    if (graphData.node_data_list.length > 0) {
+        $('#table-button').css("display", "block");
+    }
+
     $("#clear-selection").click(function() {
         clearHighlightedObjects(renderData, graphData);
         $( "#selected_node" ).val("");
@@ -563,6 +575,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     }
 
     destroyFunction = function() {
+        $('#table-button').css("display", "none");
         clearHighlightedObjects(renderData, graphData);
 
         if (graphData.layer_lines.length == 0) {
@@ -937,22 +950,14 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
             $("#show-table").css("display", "none");
             $("#hide-table").css("display", "block");
-            renderData.updateAspect();
             var container = document.getElementById('data-table');
             var percentRenderer = function (instance, td, row, col, prop, value, cellProperties) {
                 Handsontable.renderers.NumericRenderer.apply(this, arguments);
                 td.style.color = (value < 0) ? 'red' : 'green';
             };
 
-            var tableData = [];
-            for (var key in graphData.node_data) {
-              if (graphData.node_data.hasOwnProperty(key)) {
-                tableData.push([key, graphData.node_data[key]]);
-              }
-            }
-
             hot = new Handsontable(container, {
-                data: tableData,
+                data: graphData.node_data_list,
                 manualColumnResize: true,
                 width: 400,
                 colHeaders: ["Node"].concat(graphData.data_labels.slice(1)),

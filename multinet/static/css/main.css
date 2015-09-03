@@ -37,13 +37,14 @@ table#instructions{
 }
 
 .infobox {
-    border-radius: 20px;
+    border-radius: 8px;
     position: absolute;
     top: 0;
     left: 0;
     display: none;
-    padding: 10px;
+    padding: 5px;
     width: 200px;
+    background-color: #ccc; 
 }
 
 #options {

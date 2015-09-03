@@ -94,8 +94,12 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
 
         unique_keys = sorted( list( set(  edges["timestamp"] ) ) ) 
 
-        #shrink keyspace here by order of 10 so that we have less timestamps to deal with .    
-        nrbins = int( math.floor( len(unique_keys)/10 ) )
+        if len(unique_keys) < 100:
+            nrbins = len(unique_keys)
+        else:
+            #shrink keyspace here by order of 10 so that we have less timestamps to deal with.
+            nrbins = int( math.floor( len(unique_keys)/10 ) )
+
         bins = np.linspace(1, len(unique_keys), nrbins)
 
         keys_indices = dict( zip( unique_keys,  [ i for i in range(1,len(unique_keys) + 1 ) ] ) )
@@ -275,7 +279,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
                     indeg = 0
                     outdeg = 0
                 coords[node_id] = [ all_coords[ node_id ], _common, indeg, outdeg, indeg + outdeg ] 
-                
+
                 max_out_deg = max(max_out_deg, outdeg)
                 max_in_deg = max(max_in_deg, indeg)
                 max_total_deg = max(max_total_deg, outdeg + indeg)

@@ -186,7 +186,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
         print "VIZUALISATION TIMER: igraph layouting :",datetime.now() 
         #read from tmp file
         ly_start = datetime.now()
-        graph = igraph.Graph.Read( tmp_name , directed=True,format="ncol",weights=False )
+        graph = igraph.Graph.Read( tmp_name , directed=directed_graph,format="ncol",weights=False )
 
         #new layouting by rcattano
         dimension = 2
@@ -328,6 +328,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
         data['layers'] = [data[l] for l in sorted(layers)]
         data['node_data'] = node_data
         data['data_labels']= data_labels
+        data['directed'] = directed_graph
 
         data = dict(data)
 

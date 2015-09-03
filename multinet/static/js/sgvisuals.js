@@ -231,6 +231,51 @@ function animate(controls) {
     controls.update();
 }
 
+function addArrows(edges, a_positions, a_indices) {
+    for (var j=1; j < edges.length; j += 2 ) {
+        var A = new THREE.Vector3(edges[j-1].x, edges[j-1].y, edges[j-1].z);
+        var B = new THREE.Vector3(edges[j].x, edges[j].y, edges[j].z);
+        if (A.equals(B)) {
+            continue;
+        }
+
+        var dir = B.clone().sub(A).normalize();
+        var length = 100;
+        var hex = 0xffff00;
+
+        var coneGeometry = new THREE.CylinderGeometry( 0, 0.5, 1, 5, 1 );
+        coneGeometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, - 0.5, 0 ) );
+        var cone = new THREE.Mesh( coneGeometry, new THREE.MeshBasicMaterial( { color: hex } ) );
+
+        cone.matrixAutoUpdate = false;
+
+        cone.scale.set( 5, 10, 1);
+        var distance = A.distanceTo(B);
+        if (distance < 2) {
+            if (B.distanceTo(A) < 2) {
+            }
+        }
+        cone.position.copy(A.add(dir.clone().multiplyScalar(A.distanceTo(B)-2)));
+
+        var axis = new THREE.Vector3();
+        var radians;
+        if ( dir.y > 0.99999 ) {
+            cone.quaternion.set( 0, 0, 0, 1 );
+        } else if ( dir.y < - 0.99999 ) {
+            cone.quaternion.set( 1, 0, 0, 0 );
+        } else {
+            axis.set( dir.z, 0, - dir.x ).normalize();
+            radians = Math.acos( dir.y );
+            cone.quaternion.setFromAxisAngle( axis, radians );
+        }
+
+        cone.updateMatrix();
+        cone.updateMatrixWorld(true);
+
+        from_mesh(cone, a_positions, a_indices)
+    }
+}
+
 function displayEdgesInitial(keys, graphData, scene) {
     graphData.layer_lines = [];
 
@@ -249,47 +294,8 @@ function displayEdgesInitial(keys, graphData, scene) {
             if (graphData.edge_coordinates[i][key] !== undefined) {
                verts = verts.concat(graphData.edge_coordinates[i][key]);
                var edges = graphData.edge_coordinates[i][key];
-               for (var j=1; j < edges.length; j += 2 ) {
-                    var A = new THREE.Vector3(edges[j-1].x, edges[j-1].y, edges[j-1].z);
-                    var B = new THREE.Vector3(edges[j].x, edges[j].y, edges[j].z);
-                    if (A.equals(B)) {
-                        continue;
-                    }
-
-                    var dir = B.clone().sub(A).normalize();
-                    var length = 100;
-                    var hex = 0xffff00;
-
-                    var coneGeometry = new THREE.CylinderGeometry( 0, 0.5, 1, 5, 1 );
-                    coneGeometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, - 0.5, 0 ) );
-                    var cone = new THREE.Mesh( coneGeometry, new THREE.MeshBasicMaterial( { color: hex } ) );
-
-                    cone.matrixAutoUpdate = false;
-
-                    cone.scale.set( 5, 10, 1);
-                    var distance = A.distanceTo(B);
-                    if (distance < 2) {
-                        if (B.distanceTo(A) < 2) {
-                        }
-                    }
-                    cone.position.copy(A.add(dir.clone().multiplyScalar(A.distanceTo(B)-2)));
-
-                    var axis = new THREE.Vector3();
-                    var radians;
-                    if ( dir.y > 0.99999 ) {
-                        cone.quaternion.set( 0, 0, 0, 1 );
-                    } else if ( dir.y < - 0.99999 ) {
-                        cone.quaternion.set( 1, 0, 0, 0 );
-                    } else {
-                        axis.set( dir.z, 0, - dir.x ).normalize();
-                        radians = Math.acos( dir.y );
-                        cone.quaternion.setFromAxisAngle( axis, radians );
-                    }
-
-                    cone.updateMatrix();
-                    cone.updateMatrixWorld(true);
-
-                    from_mesh(cone, a_positions, a_indices)
+               if (graphData.directed) {
+                   addArrows(edges, a_positions, a_indices);
                 }
             }
         });
@@ -301,14 +307,13 @@ function displayEdgesInitial(keys, graphData, scene) {
 
         var vs = [];
 
-        var cone_geom = new THREE.Geometry();
-         for (var j=0; j < verts.length; j++) {
+        for (var j=0; j < verts.length; j++) {
             indices.push(j);
             positions[j*3] = verts[j].x;
             positions[j*3+1] = verts[j].y;
             positions[j*3+2] = verts[j].z;
 
-         }
+        }
 
         var geometry = new THREE.BufferGeometry();
         geometry.addAttribute( 'index', new THREE.BufferAttribute( new Uint32Array(a_indices), 1 ) );
@@ -546,6 +551,8 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
     // store globally
     _graphData = graphData;
+
+    graphData.directed = data.directed;
 
     graphData.layers = data.layers;
     graphData.node_data = data.node_data;

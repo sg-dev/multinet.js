@@ -67,6 +67,7 @@ def upload_file():
         data_path = os.path.join(app.config['UPLOAD_FOLDER'], '{}_{}_node_data.csv'.format(dataset, hash))
         data_file.save(data_path)
 
-    data = graph_layout(path, data_path)
+    print(request.form.get('is_directed', 'true'), request.form.get('is_directed', 'true')=='true')
+    data = graph_layout(path, data_path, directed_graph=request.form.get('is_directed', 'true')=='true')
     return jsonify(url=url_for('share', dataset=dataset, hash=hash), **data)
 

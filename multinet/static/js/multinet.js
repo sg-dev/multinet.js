@@ -90,7 +90,7 @@ function RenderData() {
         } else {
             that.controls.object = that.camera;
         }
-		that.currentCamera = "Orthographic";
+        that.currentCamera = "Orthographic";
         // Limit maximum scroll distance; it should be definitely smaller than the
         // FAR parameter of the camera
         that.controls.maxDistance = 90000;//this.controls.maxDistance; //90000;
@@ -102,9 +102,9 @@ function RenderData() {
 
     this.updateAspect = function() {
         var canvas = $("#container canvas");
-        that.camera.aspect = canvas.width() / canvas.height();
+        that.camera.aspect = window.innerWidth / window.innerHeight;
         that.camera.updateProjectionMatrix();
-        that.renderer.setSize(canvas.width(), canvas.height());
+        that.renderer.setSize(window.innerWidth, window.innerHeight);
         that.render();
     };
 
@@ -125,6 +125,7 @@ function RenderData() {
     //this.vertex_geometry = new THREE.BoxGeometry( 20, 20, 20);
 
     window.addEventListener('resize', function onWindowResize() {
+        console.log("UPDATE");
         that.updateAspect();
     }, false);
 

@@ -93,7 +93,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
                 edges_type = edges_type[:3]
         edges = np.loadtxt( open(_path, 'rb'), delimiter=';',  skiprows = 1, dtype = edges_type )
         if len(edges_type) == 3:
-            timestamps = len(edges["layer"]) * ['01-01-2015']
+            timestamps = len(edges["layer"]) * ['00-00-0000']
         else:
             timestamps = edges["timestamp"]
         layers_str = [ "l%s" % ( layer, ) for layer in set( edges["layer"] ) ] 
@@ -143,7 +143,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
             edges_tmp = edges[edges["layer"] == layer]
 
             if len(edges_type) == 3:
-                timestamps_tmp = len(edges_tmp["layer"]) * ['00-00-2000']
+                timestamps_tmp = len(edges_tmp["layer"]) * ['00-00-0000']
             else:
                 timestamps_tmp = edges_tmp["timestamp"]
 

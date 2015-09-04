@@ -580,8 +580,10 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     }
 
     destroyFunction = function() {
-        $('#table-button').css("display", "none");
-        $('#slider-container').css('display', 'none');
+        $('#table-button').hide();
+        $('#slider-container').hide();
+        $('#degreeOptions').hide();
+
         clearHighlightedObjects(renderData, graphData);
 
         if (graphData.layer_lines.length == 0) {
@@ -807,12 +809,20 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
         $("#slider-container").show();
     }
 
+    if (data.directed) {
+        $('#degreeOptions').show();
+    }
+
     $('#nrcolor').colorpicker({ horizontal: true });
     $('#nrcolor').colorpicker().on('changeColor.colorpicker', function(event) {
         var hexStr = event.color.toHex();
         $("#nrcolor").css('background-color', hexStr);
-        graphData.layer_lines[graphData.layer_index].material.color.setHex(parseInt(hexStr.slice(1, hexStr.length), 16));
-        graphData.layer_cones[graphData.layer_index].material.color.setHex(parseInt(hexStr.slice(1, hexStr.length), 16));
+        var color = parseInt(hexStr.slice(1, hexStr.length), 16);
+        graphData.layer_lines[graphData.layer_index].material.color.setHex(color);
+
+        if (graphData.directed) {
+            graphData.layer_cones[graphData.layer_index].material.color.setHex(color);
+        }
         renderData.render();
     });
 
@@ -826,7 +836,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     }
 
 
-    function loopThrough(i, min, span){         
+    function loopThrough(i, min, span) {
         if ($("#replay-mode").val() === "single") {
             foo(min, i, i-min );
         } else {
@@ -883,7 +893,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     });
 
     $('#graph-replay-pause').click(function(e) {
-
         clearInterval( playLoop );
 
         var values = $("#slider").slider( "option", "values" );
@@ -894,8 +903,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     });
     
     $('#graph-replay-continue').click(function(e) {
-        
-
         clearInterval( playLoop );
 
         $('.graph-replay-buttons').hide()

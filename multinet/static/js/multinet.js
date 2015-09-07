@@ -1081,7 +1081,7 @@ function showPopup(x, y, data, labels) {
     }
 
     $.each(data, function(i, obj) {
-        table += '<tr>\n<td>'+labels[i]+'</td>\n<td>'+obj+'</td></tr>';
+        table += '<tr>\n<td>'+labels[i+1]+'</td>\n<td>'+obj+'</td></tr>';
     });
     $("#popup").html(table);
 

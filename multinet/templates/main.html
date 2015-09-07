@@ -214,7 +214,7 @@
 
             <tr>
                 <td colspan="2">
-                    <div id="degreeOptions" class="btn-group" data-toggle="buttons">
+                    <div id="degreeOptions" class="btn-group" data-toggle="buttons" >
                       <label class="btn btn-primary active">
                         <input type="radio" name="degreeOptions" id="degreeOption1" value="indegree" autocomplete="off" checked> In-
                       </label>
@@ -412,7 +412,7 @@
     <script src="{{ url_for('static', filename='js/threejs/stats-r12.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/threejs/detector.js') }}"></script>
 
-    <script src="{{ url_for('static', filename='js/sgvisuals.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/multinet.js') }}"></script>
 
     <script>
 
@@ -723,7 +723,7 @@
                             directed = true;
                     }
 
-                    data.formData = {"layout-algorithm": $("#instructions .layout-selection button.dropdown-toggle").text(),
+                    data.formData = {"layout_algorithm": $("#instructions .layout-selection button.dropdown-toggle").text(),
                                      "nodefile": $('#fileupload-nodes')[0].files[0],
                                      "is_directed": directed };
 

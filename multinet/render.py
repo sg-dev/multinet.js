@@ -248,8 +248,8 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         print "width:", ly_width, scl
         print(ly.boundaries())
 
-        boundaries = ly.boundaries()
-        width2 = abs(boundaries[0][0]) + abs(boundaries[1][0])
+        box = ly.bounding_box()
+        width2 = abs(box.left) + abs(box.right)
 
         coords = ly.__dict__['_coords']
         print boundaries[0][0], boundaries[1][0]

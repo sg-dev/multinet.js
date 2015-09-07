@@ -12,8 +12,8 @@ var _graphData = null;
 var playLoop;
 
 
-var maxLayerDist = 2500;
-var minLayerDist = 500;
+var maxLayerDist = 1000;
+var minLayerDist = 150;
 var centerY = -1000;
 //constants for node sizes
 var maxDeg = 120;

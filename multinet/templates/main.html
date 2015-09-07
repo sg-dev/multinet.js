@@ -300,7 +300,7 @@
 
 
 
-            <!--tr>
+            <tr>
             
                     <td>
                     <b>Share Url:</b>
@@ -314,7 +314,7 @@
                     <p></p>
                 </td>
             
-            </tr-->
+            </tr>
             
             <tr>
                 <td colspan="2">
@@ -693,10 +693,10 @@
     /*
      * Graph file upload handling 
      */
-    function csrfSafeMethod(method) {
+    //function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
+    //    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    //}
             
     /*
      * Handle file uploads here. If the upload is successful, render the resulting network 

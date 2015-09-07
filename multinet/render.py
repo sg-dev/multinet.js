@@ -171,7 +171,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "fruchterman-reingold", 
 
     except Exception,e:
         print "graph init failed", _path, e
-        return { "graph_ready": False,  "errors": "Improper file format. Please make sure your csv file complies with the tool's format" }
+        return { "graph_ready": False,  "errors": e } #"Improper file format. Please make sure your csv file complies with the tool's format" }
 
     try:
         #write edges to file

@@ -11,7 +11,6 @@ var _graphData = null;
 
 var playLoop;
 
-
 var maxLayerDist = 1000;
 var minLayerDist = 150;
 var centerY = -1000;
@@ -52,7 +51,6 @@ function RenderData() {
     this.usePerspectiveCamera = function(currentPosition) {
         
         that.camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 100000);
-        //that.camera.position.z = 10000;
 
         if (currentPosition) {
             that.camera.position.x = currentPosition.x; 
@@ -146,14 +144,11 @@ function RenderDataSVG(currentPosition) {
     this.renderer.sortObjects = false;
 
     this.camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 100000 );
-    this.camera.position.z = 10000;
-
 
     if(currentPosition){
         this.camera.position.x = currentPosition.x; 
         this.camera.position.y = currentPosition.y; 
         this.camera.position.z = currentPosition.z;
-            
     }
 
 
@@ -413,18 +408,18 @@ function transformTo2D(coords, layer_id, width) {
     new_coords.z = 0;
 
     if (layer_id > 0) {
-        new_coords.x += 400 + (layer_id) * width;
+        new_coords.x += 400 + (layer_id) * (4 * width);
     }
 
     return new_coords;
 }
 
-function transformTo3D(coords, layer_id, y_step, y_range) {
+function transformTo3D(coords, layer_id, y_step) {
     var new_coords = {};
 
-    new_coords.x = coords[0]*4;
-    new_coords.y = -y_range + (y_step*(layer_id));
-    new_coords.z = coords[1]*4;
+    new_coords.x = coords[0];
+    new_coords.y = y_step * (layer_id);
+    new_coords.z = coords[1];
 
     return new_coords;
 }
@@ -491,7 +486,6 @@ function createGraph2D(data, renderData) {
     renderData.controls.minXPan = data.layer_ct * data.width2 * -1.5;
     renderData.controls.maxXPan = data.layer_ct * data.width2 * 3;
 
-    
     var y_range = 3000;
     renderData.camera.position.z = y_range * 10;
     renderData.controls.maxDistance = y_range * 5;
@@ -502,8 +496,10 @@ function createGraph2D(data, renderData) {
 }
 
 function createGraph3D(data, renderData, degreeSelector) {
-    var y_range = data.width; //3000;
-    var y_step = Math.max( Math.min(y_range / (data.layer_ct-1) , maxLayerDist ) , minLayerDist);
+    var y_range = data.width2;
+    var y_step = Math.max( Math.min(y_range / data.layer_ct / 2 , maxLayerDist ) , minLayerDist);
+
+    y_range = (data.layer_ct-1) * y_step;
 
     renderData.D3 = true;
     renderData.usePerspectiveCamera();
@@ -512,24 +508,35 @@ function createGraph3D(data, renderData, degreeSelector) {
     // Limit panning
     renderData.controls.minYPan = -2000;
     renderData.controls.maxYPan = 2000;
-    renderData.controls.minXPan = data.width * -1.5;
-    renderData.controls.maxXPan = data.width * 2;
+    renderData.controls.minXPan = data.width2 * -1.5;
+    renderData.controls.maxXPan = data.width2 * 2;
 
-    //attempt to center the graph to camera wrt its size
-    
-    renderData.camera.position.z = data.width * 6;
-    renderData.camera.position.x = data.width * -2;
-    renderData.camera.position.y = 0.5 * y_range;
+    // attempt to center the graph to camera wrt its size
+    // inspired by http://stackoverflow.com/questions/13350875/three-js-width-of-view/13351534#13351534
+    var vFOV = renderData.camera.fov * Math.PI / 180; 
+    var ratio = 2 * Math.tan( vFOV / 2 );
+    var aspect = window.innerWidth / window.innerHeight; 
+    var d1 = y_range / ratio;
+    var d2 = data.width2 / (ratio * aspect)
+    var dist = Math.max(d1, d2);
+
+    renderData.camera.position.z = 1.5 * dist;
+    renderData.camera.position.x = 0;
+    renderData.camera.position.y = y_range * 0.5;
+    renderData.controls.target = new THREE.Vector3(0, 0.5 * y_range, 0);
+    console.log(renderData.camera.position);
     
     createGraph(data, renderData, function(coords, layer_id) {
-        return transformTo3D(coords, layer_id, y_step, y_range);
+        return transformTo3D(coords, layer_id, y_step);
     }, true, degreeSelector);
 }
 
 function createGraph3DStatic(data, renderData) {
+    var y_range = data.width2;
+    var y_step = Math.max( Math.min(y_range / (data.layer_ct-1) / 2 , maxLayerDist ) , minLayerDist);
 
-    var y_range = data.width; //3000;
-    var y_step = Math.max( Math.min(y_range / (data.layer_ct-1) , maxLayerDist ) , minLayerDist);
+    y_range = data.layer_ct * y_step;
+
 
 
     createGraph(data, renderData, function(coords, layer_id) {
@@ -634,7 +641,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     var area = data.max_node_ct;
     var num_edges = data.edgect1 + data.edgect2;
 
-    var y_range = data.width; //3000;
+    var y_range = data.width2; //3000;
     graphData.y_range = y_range;
     var y_step = Math.max( Math.min(y_range / (data.layer_ct-1) , maxLayerDist ) , minLayerDist);
 
@@ -748,6 +755,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
             value: graphData.y_range,
             range: false,
             slide: function( event, ui ) {
+                console.log("ping")
                 var i = ui.value; 
                 updateLayerDistance( i );
             }
@@ -763,7 +771,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     var layerCameraPos = {0: 0};
     for (var i = 1;  i < data.layers.length ; i++) {
         if (i==1) {
-            layerCameraPos[i] = layerCameraPos[i-1] + 400 + data.width2;
+            layerCameraPos[i] = layerCameraPos[i-1] + 400 +  data.width2;
         } else {
             layerCameraPos[i] = layerCameraPos[i-1] + data.width2;
         }

@@ -243,7 +243,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         ly_width = abs(boundaries[0][0]) + abs(boundaries[1][0])    
         ly_width = ly_width * widthCoeff
 
-        ly.scale( scl )
+        ly.scale( scl * 4)
 
         print "width:", ly_width, scl
         print(ly.boundaries())
@@ -252,7 +252,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         width2 = abs(boundaries[0][0]) + abs(boundaries[1][0])
 
         coords = ly.__dict__['_coords']
-        print type( coords[0][0] ), type( coords[0][1] )
+        print boundaries[0][0], boundaries[1][0]
         #numpy.float64 cannot be jsonified later, so we convert to standard float:
         coords = [ [ float( c[0] )* 1 , float( c[1] ) * 1 ] for c in coords  ]
 

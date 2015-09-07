@@ -43,7 +43,7 @@ function RenderData() {
 
     this.controls = null;
 
-	this.currentCamera = null;
+    this.currentCamera = null;
 
     var that = this;
 
@@ -496,7 +496,11 @@ function createGraph2D(data, renderData) {
     var dist = Math.max(d1, d2);
 
     renderData.camera.position.z = 1.5 * dist;
+
+    // update camera.far and controls to calculated distance
     renderData.controls.maxDistance = 2 *  dist;
+    renderData.camera.far = 2.1 * dist;
+    renderData.camera.updateProjectionMatrix();
 
      createGraph(data, renderData, function(coords, layer_id) {
         return transformTo2D(coords, layer_id, data.width2);
@@ -532,8 +536,12 @@ function createGraph3D(data, renderData, degreeSelector) {
     renderData.camera.position.x = 0;
     renderData.camera.position.y = y_range * 0.5;
     renderData.controls.target = new THREE.Vector3(0, 0.5 * y_range, 0);
-    console.log(renderData.camera.position);
-    
+
+    // update camera.far and controls to calculated distance
+    renderData.controls.maxDistance = 2 *  dist;
+    renderData.camera.far = 2.1 * dist;
+    renderData.camera.updateProjectionMatrix();
+
     createGraph(data, renderData, function(coords, layer_id) {
         return transformTo3D(coords, layer_id, y_step);
     }, true, degreeSelector);

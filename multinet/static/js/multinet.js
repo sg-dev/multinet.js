@@ -403,12 +403,12 @@ function addEdge(source, target, year, edge_coordinates) {
 
 function transformTo2D(coords, layer_id, width) {
     var new_coords = {};
-    new_coords.x = coords[0]*4;
-    new_coords.y = coords[1]*4;
+    new_coords.x = coords[0];
+    new_coords.y = coords[1];
     new_coords.z = 0;
 
     if (layer_id > 0) {
-        new_coords.x += 400 + (layer_id) * (4 * width);
+        new_coords.x += 400 + (layer_id) * width;
     }
 
     return new_coords;
@@ -486,9 +486,17 @@ function createGraph2D(data, renderData) {
     renderData.controls.minXPan = data.layer_ct * data.width2 * -1.5;
     renderData.controls.maxXPan = data.layer_ct * data.width2 * 3;
 
-    var y_range = 3000;
-    renderData.camera.position.z = y_range * 10;
-    renderData.controls.maxDistance = y_range * 5;
+    // attempt to center the graph to camera wrt its size
+    // inspired by http://stackoverflow.com/questions/13350875/three-js-width-of-view/13351534#13351534
+    var vFOV = renderData.camera.fov * Math.PI / 180; 
+    var ratio = 2 * Math.tan( vFOV / 2 );
+    var aspect = window.innerWidth / window.innerHeight; 
+    var d1 = data.width2 / ratio;
+    var d2 = data.width2 / (ratio * aspect)
+    var dist = Math.max(d1, d2);
+
+    renderData.camera.position.z = 1.5 * dist;
+    renderData.controls.maxDistance = 2 *  dist;
 
      createGraph(data, renderData, function(coords, layer_id) {
         return transformTo2D(coords, layer_id, data.width2);

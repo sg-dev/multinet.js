@@ -26,7 +26,7 @@
     </div>
 
     <div id="fileupload-div" class="div-center">
-        <table id="instructions" width="200">
+        <table id="instructions" width="230">
             <tr>
             <td><p>
                 Welcome to <b>MultiNetViz.js</b>, a network visualization tool for dynamic, multi-layered networks in WebGL and Javascript. 
@@ -42,17 +42,17 @@
 
             <tr>
                 <td>
-                    <button id="samplevis-3layers" type="submit" class="btn btn-danger delete">
-                        <span>See sample with 3 layers</span>
-                    </button>
+                    <a class="btn btn-danger sample" href="{{ url_for('share', dataset='politics_sample_2', hash=None) }}">
+                        See sample with 3 layers
+                    </a>
                 </td>
             </tr>
 
             <tr>
                 <td>
-                    <button id="samplevis-2layers" type="submit" class="btn btn-danger delete">
-                        <span>See sample with 2 layers</span>
-                    </button>
+                        <a class="btn btn-danger sample" href="{{ url_for('share', dataset='politics_ch_twitter', hash=None) }}">
+                            Twitter network of CH politicians
+                        </a>
                 </td>
             </tr>
 
@@ -296,10 +296,6 @@
                 </td>
                 
             </tr>
-
-
-
-
             <tr>
             
                     <td>
@@ -313,9 +309,7 @@
                     </div>
                     <p></p>
                 </td>
-            
             </tr>
-            
             <tr>
                 <td colspan="2">
                     <button id="copy-url" type="submit" class="btn btn-danger delete" style="width:100%;margin:2px 0;" data-clipboard-target="clipboard-text" >
@@ -373,22 +367,16 @@
                     </select>
                 </td>
             </tr>
-
-
-                    <tr>
-                            <td colspan="2">
-                                    <b>Layer Distance</b>
-                            </td>
-                    </tr>
-                    <tr>
-                            <td colspan="2">
-                                    <div id="distanceSlider" style=""></div>
-                            </td>
-        
-                    </tr>
-
-
-
+            <tr>
+                <td colspan="2">
+                    <b>Layer Distance</b>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="distanceSlider" style=""></div>
+                </td>
+            </tr>
         </table>
     </div>
 
@@ -479,58 +467,6 @@
 
     var cnt = 0;
 
-    $("#samplevis-3layers").click(function(){
-            $.ajax({url:"{{ url_for('data', typ='sample', dataset='politics_sample_2') }}",
-            beforeSend:function(){
-                if (destroyFunction != null) {
-                    destroyFunction();
-                }
-                 $('#fileupload-div').switchClass("div-center", "div-left" );
-                     $('#fileupload-div').show();
-                 $('#loading-container').show();
-            },
-            success:function(data){
-                styleGraphLoaded();
-
-                createGraph3D(data, getRenderData());
-                globalData = data;
-            },
-            error:function(data){
-            
-                     $('#loading-container').hide();
-                     $('#fileupload-div').switchClass("div-center", "div-left" );
-                     $('#fileupload-div').show();
-
-            }
-        });
-    }); 
-
-     $("#samplevis-2layers").click(function(){
-        $.ajax({url:"{{ url_for('data', typ='sample', dataset='politics_sample_2l') }}",
-            beforeSend:function(){
-                if (destroyFunction != null) {
-                    destroyFunction();
-                }
-                $('#fileupload-div').switchClass("div-center", "div-left" );
-                    $('#fileupload-div').show();
-                $('#loading-container').show();
-            },
-            success:function(data){
-                styleGraphLoaded();
-
-                createGraph3D(data, getRenderData());
-                globalData = data;
-            },
-            error:function(data){
-            
-                     $('#loading-container').hide();
-                     $('#fileupload-div').switchClass("div-center", "div-left" );
-                     $('#fileupload-div').show();
-
-            }
-        });
-    }); 
-
     $('#display-instructions').click(function(){
 
         if( $('#fileupload-div').is(':visible') ){
@@ -541,7 +477,6 @@
             $('#fileupload-div').show(400); //slideDown(1000);
             $(this).html("<span>«menu</span>");
         }
-
     }); 
 
     $('td#how-it-works').click(function(){

@@ -149,7 +149,7 @@ table#instructions{
 #fileupload-div {
     position: absolute;
     z-index: 100000;
-    max-width:270px;
+    max-width:350px;
     height:auto;
     background-color:transparent;
     border: solid 1px #666;
@@ -157,6 +157,11 @@ table#instructions{
     border-radius: 10px;
     padding:5px 10px 10px 10px;
     display: none;
+}
+
+a.sample {
+    margin-top: 10px;
+    width: 100%;
 }
 
 .div-left {

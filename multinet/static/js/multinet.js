@@ -585,7 +585,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     graphData.node_data_list = [];
     for (var key in graphData.node_data) {
       if (graphData.node_data.hasOwnProperty(key)) {
-        graphData.node_data_list.push([key, graphData.node_data[key]]);
+        graphData.node_data_list.push([key].concat(graphData.node_data[key]));
       }
     }
 
@@ -771,7 +771,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
             value: graphData.y_range,
             range: false,
             slide: function( event, ui ) {
-                console.log("ping")
                 var i = ui.value; 
                 updateLayerDistance( i );
             }
@@ -1009,10 +1008,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
                 className: "htCenter htMiddle",
                 readOnly: true,
                 multiSelect: false,
-                columns: [
-                  {data: 0, type: 'text'},
-                  {data: 1, type: 'numeric', format: '0'},
-                ]
             }); 
             Handsontable.hooks.add('afterSelection',function(r1, c1, r2, c2) {
                 var row = hot.getDataAtRow(r1);

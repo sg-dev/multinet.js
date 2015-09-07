@@ -658,9 +658,15 @@
                             directed = true;
                     }
 
-                    data.formData = {"layout_algorithm": $("#instructions .layout-selection button.dropdown-toggle").text(),
-                                     "nodefile": $('#fileupload-nodes')[0].files[0],
-                                     "is_directed": directed };
+                    data.formData = {
+                            "nodefile": $('#fileupload-nodes')[0].files[0],
+                            "is_directed": directed
+                    };
+
+                    var layout_algorithm = $("#instructions .layout-selection button.dropdown-toggle").text();
+                    if (layout_algorithm.search("Choose layout algorithm") == -1) {
+                        data.formData["layout_algorithm"] = layout_algorithm;
+                    }
 
                     $('#fileupload-div').switchClass("div-center", "div-left" );
                     $('#fileupload-div').show();

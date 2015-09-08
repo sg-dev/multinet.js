@@ -48,11 +48,7 @@ function RenderData() {
 
     var that = this;
 
-    //perspective camera
-    this.usePerspectiveCamera = function(currentPosition) {
-        
-        that.camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 100000);
-
+    function updateCameraPosition(currentPosition, that) {
         if (currentPosition) {
             that.camera.position.x = currentPosition.x; 
             that.camera.position.y = currentPosition.y; 
@@ -65,37 +61,30 @@ function RenderData() {
         } else {
             that.controls.object = that.camera;
         }
-        that.currentCamera = "Perspective";
-        // Limit maximum scroll distance; it should be definitely smaller than the
-        // FAR parameter of the camera
-        that.controls.maxDistance = 90000;
         that.controls.zoom = 1;
+    }
 
+    //perspective camera
+    this.usePerspectiveCamera = function(currentPosition) {
+        that.camera = new THREE.PerspectiveCamera(
+                40, window.innerWidth / window.innerHeight, 1, 100000
+        );
+
+        that.currentCamera = "Perspective";
+        updateCameraPosition(currentPosition, that);
     };
 
-
     this.useOrthographicCamera = function(currentPosition) {
-        that.camera = new THREE.OrthographicCamera( 2 * window.innerWidth / - 1, 2 * window.innerWidth / 1, 2 * window.innerHeight / 1, 2 * window.innerHeight / - 1, -5000, 100000 );
-        //
-        
-        if(currentPosition){
-            that.camera.position.x = currentPosition.x; 
-            that.camera.position.y = currentPosition.y; 
-            that.camera.position.z = currentPosition.z;
-            
-        }
+        that.camera = new THREE.OrthographicCamera(
+                2 * window.innerWidth / - 1,
+                2 * window.innerWidth / 1,
+                2 * window.innerHeight / 1,
+                2 * window.innerHeight / - 1,
+                -5000, 100000
+        );
 
-        if (that.controls == null) {
-            that.controls = new THREE.OrbitControls( that.camera, document.getElementById("container") );
-            that.controls.addEventListener( 'change', function() { that.render(); } );
-        } else {
-            that.controls.object = that.camera;
-        }
         that.currentCamera = "Orthographic";
-        // Limit maximum scroll distance; it should be definitely smaller than the
-        // FAR parameter of the camera
-        that.controls.maxDistance = 90000;//this.controls.maxDistance; //90000;
-        that.controls.zoom = 1;
+        updateCameraPosition(currentPosition, that);
     };
 
     this.usePerspectiveCamera();
@@ -541,7 +530,11 @@ function createGraph3D(data, renderData, degreeSelector) {
     renderData.controls.target = new THREE.Vector3(0, 0.5 * y_range, 0);
 
     // update camera.far and controls to calculated distance
+    // Limit maximum scroll distance; it should be definitely smaller than the
+    // FAR parameter of the camera
     renderData.controls.maxDistance = 2 *  dist;
+
+    // update camera.far and controls to calculated distance
     renderData.camera.far = 2.1 * dist;
     renderData.camera.updateProjectionMatrix();
 

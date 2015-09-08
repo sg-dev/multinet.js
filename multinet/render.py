@@ -25,28 +25,29 @@ def generate_id(size=6, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 
-def get_hash(path):
+def get_hash(path, options):
     hasher = hashlib.md5()
 
     with open(path) as f:
         hasher.update(f.read())
+        hasher.update(str(options))
         return hasher.hexdigest()
 
 
-def get_cache_path(path):
-    return CACHE_PATH_TEMPLATE.format(get_hash(path))
+def get_cache_path(path, options):
+    return CACHE_PATH_TEMPLATE.format(get_hash(path, options))
 
 
-def get_from_cache(path):
+def get_from_cache(path, options):
     try:
-        with open(get_cache_path(path), 'rb') as f:
+        with open(get_cache_path(path, options), 'rb') as f:
             return cPickle.load(f)
     except:
         return None
 
 
-def cache_data(path, data):
-    with open(get_cache_path(path), 'wb') as f:
+def cache_data(path, data, options):
+    with open(get_cache_path(path, options), 'wb') as f:
         cPickle.dump(data, f, protocol=2)
 
 
@@ -58,7 +59,13 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
             "errors": "Unsuspported layout algorithm"
         }
 
-    cached_data = get_from_cache(filename)
+    options = {
+        'node_data_filename': node_data_filename,
+        'ly_algorithm': ly_alg,
+        'directed_graph': directed_graph
+    }
+
+    cached_data = get_from_cache(filename, options)
 
     if cached_data:
         return cached_data
@@ -338,7 +345,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
 
         data = dict(data)
 
-        cache_data(filename, data)
+        cache_data(filename, data, options)
 
         return data
 

@@ -6,7 +6,7 @@ from flask import render_template, jsonify, Flask, request, redirect, url_for
 from werkzeug import secure_filename
 
 from multinet import app, VISUALIZATION_DIR
-from multinet.render import graph_layout, get_hash
+from multinet.render import graph_layout
 
 
 ALLOWED_EXTENSIONS = set(['csv',])
@@ -70,4 +70,3 @@ def upload_file():
     layout_algorithm = request.form.get('layout_algorithm', 'Fruchterman-Reingold')
     data = graph_layout(path, data_path, directed_graph=request.form.get('is_directed', 'true')=='true', ly_alg=layout_algorithm)
     return jsonify(url=url_for('share', dataset=dataset, hash=hash), **data)
-

@@ -562,7 +562,6 @@
         $('#info-container').addClass('disable-element');
 
         $('#fileupload-div').switchClass("div-center", "div-left" );
-        $('#fileupload-div').show();
         $('#loading-container').show();
         $('#container').hide();
 
@@ -601,8 +600,6 @@
                     +'&camera='+encodeURIComponent(JSON.stringify(cameraInfo))
                     +'&range='+encodeURIComponent(range));
         */
-
-
     });
 
     /*
@@ -613,17 +610,14 @@
         debug: false
     } );
 
-    clientTarget.on( "load", function(clientTarget)
-    {
+    clientTarget.on( "load", function(clientTarget) {
         $('#flash-loaded').fadeIn();
-    
         clientTarget.on( "complete", function(clientTarget, args) {
             clientTarget.setText( args.text );
             $('#target-to-copy-text').fadeIn();
         } );
     } );
 
-    
     /*
      * Graph file upload handling 
      */

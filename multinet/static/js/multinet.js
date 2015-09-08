@@ -548,8 +548,6 @@ function createGraph3DStatic(data, renderData) {
 
     y_range = data.layer_ct * y_step;
 
-
-
     createGraph(data, renderData, function(coords, layer_id) {
         return transformTo3D(coords, layer_id, y_step);
     }, false);
@@ -681,7 +679,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
      * At the moment, each key is year - min_year, so that the containers keys start from 0, which makes it simple for array indexing.
      * Once the slider is moved, the corresponding containers for the omitted timestamps are set to invisible
      */
-    
+
     graphData.selected_timestamps = {};
     $.each(data.unique_keys, function(i, obj) {
         graphData.selected_timestamps[obj] = true;
@@ -760,7 +758,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
         renderData.render();
     }
 
-    console.log("Y_range", graphData.y_range)
     $( "#distanceSlider" ).slider({ 
             min: 0,
             max: graphData.y_step * 2,

@@ -114,7 +114,6 @@ function RenderData() {
     //this.vertex_geometry = new THREE.BoxGeometry( 20, 20, 20);
 
     window.addEventListener('resize', function onWindowResize() {
-        console.log("UPDATE");
         that.updateAspect();
     }, false);
 
@@ -656,6 +655,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     var y_range = data.width2; //3000;
     graphData.y_range = y_range;
     var y_step = Math.max( Math.min(y_range / (data.layer_ct-1) , maxLayerDist ) , minLayerDist);
+    graphData.y_step = y_step;
 
     var node_cnt = 0;
 
@@ -714,7 +714,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     function updateLayerDistance(dist) {
         clearHighlightedObjects(renderData, graphData);
 
-        var base_pos = -dist;
+        var base_pos = 0;
 
         // Update y coordinate for meshes and layer_node mapping.
         // Note: this does not move any vertices, but is needed later for raycasting
@@ -760,11 +760,12 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
         renderData.render();
     }
 
+    console.log("Y_range", graphData.y_range)
     $( "#distanceSlider" ).slider({ 
             min: 0,
-            max: graphData.y_range * 2,
+            max: graphData.y_step * 2,
             step: 50, 
-            value: graphData.y_range,
+            value: graphData.y_step,
             range: false,
             slide: function( event, ui ) {
                 var i = ui.value; 

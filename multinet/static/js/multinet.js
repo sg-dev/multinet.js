@@ -586,7 +586,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     }
 
     if (graphData.node_data_list.length > 0) {
-        $('#table-button').css("display", "block");
+        $('#table-button').show();
     }
 
     $("#clear-selection").click(function() {
@@ -971,21 +971,21 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
         var hot = null;
         $("#hide-table").click(function() {
             hot.destroy();
-            $("#data-table").css("display", "none");
+            $("#data-table").hide();
             //$("#container canvas").css("width", $(window).width());
             renderData.updateAspect();
-            $("#hide-table").css("display", "none");
-            $("#show-table").css("display", "block");
+            $("#hide-table").hide();
+            $("#show-table").show();
         });
 
         $("#show-table").click(function() {
             //$("#container canvas").css("width", $(window).width()-450);
             $("#container").css("float", "left");
-            $("#data-table").css("display", "block");
+            $("#data-table").show();
             $("#data-table").css("height", $(window).height()-100);
 
-            $("#show-table").css("display", "none");
-            $("#hide-table").css("display", "block");
+            $("#show-table").hide();
+            $("#hide-table").show();
             var container = document.getElementById('data-table');
             var percentRenderer = function (instance, td, row, col, prop, value, cellProperties) {
                 Handsontable.renderers.NumericRenderer.apply(this, arguments);
@@ -1038,14 +1038,14 @@ function addGeomentry(geometry, material, scene) {
 }
 
 function clearHighlightedObjects(renderData, graphData) {
-    $("#popup").css("display", "none");
+    $("#popup").hide();
     for (var i=0; i < graphData.highlight_meshes.length; i++) {
         renderData.scene.remove(graphData.highlight_meshes[i]);
         graphData.highlight_meshes[i].geometry.dispose();
 
         renderData.scene.remove(graphData.neighborhood_lines[i]);
         graphData.neighborhood_lines[i].geometry.dispose();
-        $("#clear-selection-tr").css("display", "none");
+        $("#clear-selection-tr").hide();
     }
     graphData.highlight_meshes = [];
     graphData.neighborhood_lines = [];
@@ -1098,7 +1098,7 @@ function showPopup(x, y, data, labels) {
     $("#popup").css("position", "absolute")
         .css("left", boxX)
         .css("top", boxY)
-        .css("display", "block");
+        .show();
 }
 
 function highlightNode(graphData, renderData, node) {
@@ -1161,7 +1161,7 @@ function makeOnMouseDownHandler(renderData, graphData) {
             if (!event.ctrlKey) {
                 clearHighlightedObjects(renderData, graphData);
             }
-            $("#clear-selection-tr").css("display", "");
+            $("#clear-selection-tr").show();
             var selected_node = nearest_intersection.object;
 
             showPopup(event.clientX, event.clientY, graphData.node_data[selected_node.node_id], graphData.data_labels);

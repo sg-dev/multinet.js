@@ -44,6 +44,7 @@ function RenderData() {
     this.controls = null;
 
     this.currentCamera = null;
+    this.controlEventListener = null;
 
     var that = this;
 
@@ -60,6 +61,7 @@ function RenderData() {
 
         if (that.controls == null) {
             that.controls = new THREE.OrbitControls( that.camera, document.getElementById("container") );
+            that.controls.addEventListener( 'change', function() { that.render(); } );
         } else {
             that.controls.object = that.camera;
         }
@@ -68,7 +70,7 @@ function RenderData() {
         // FAR parameter of the camera
         that.controls.maxDistance = 90000;
         that.controls.zoom = 1;
-        that.controls.addEventListener( 'change', function() { that.render();} );
+
     };
 
 
@@ -85,6 +87,7 @@ function RenderData() {
 
         if (that.controls == null) {
             that.controls = new THREE.OrbitControls( that.camera, document.getElementById("container") );
+            that.controls.addEventListener( 'change', function() { that.render(); } );
         } else {
             that.controls.object = that.camera;
         }
@@ -93,7 +96,6 @@ function RenderData() {
         // FAR parameter of the camera
         that.controls.maxDistance = 90000;//this.controls.maxDistance; //90000;
         that.controls.zoom = 1;
-        that.controls.addEventListener( 'change', function() { that.render();} );
     };
 
     this.usePerspectiveCamera();
@@ -365,8 +367,9 @@ function displayEdges(start, end, graphData, scene) {
 */
 function addNode(node, parent_geometry, materialIndex, graphData, scale, layer_node_meshes) {
     var scl = scale; 
-    if(scl <= 2){scl = 1};
-
+    if(scl <= 2) {
+        scl = 1
+    };
 
     if( scl == 3  ){ 
         //circle args = radius, #segments in circle

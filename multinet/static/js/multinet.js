@@ -43,7 +43,6 @@ function RenderData() {
 
     this.controls = null;
 
-    this.currentCamera = null;
     this.controlEventListener = null;
 
     var that = this;
@@ -70,7 +69,6 @@ function RenderData() {
                 40, window.innerWidth / window.innerHeight, 1, 100000
         );
 
-        that.currentCamera = "Perspective";
         updateCameraPosition(currentPosition, that);
     };
 
@@ -83,7 +81,6 @@ function RenderData() {
                 -5000, 100000
         );
 
-        that.currentCamera = "Orthographic";
         updateCameraPosition(currentPosition, that);
     };
 

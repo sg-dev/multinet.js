@@ -14,9 +14,6 @@ var playLoop;
 var maxLayerDist = 1000;
 var minLayerDist = 150;
 var centerY = -1000;
-//constants for node sizes
-var maxDeg = 120;
-var widthCoeff = 25;
 
 
 function getRenderData() {
@@ -417,9 +414,9 @@ function createLayer(data, area, layer_id, graphData, coordinateTransformer, dat
     graphData.edge_coordinates.push(layer_edge_coordinates);
     graphData.neighborhood.push(data.neighborhood);
 
-    var scaleParam =  Math.max( dataWidth / 100  , 500);
-    var maxDegLayer = Math.min( degreeSelector(data.maxDeg), maxDeg );
-    
+    var maxDegLayer = degreeSelector(data.maxDeg);
+    var maxSize = Math.pow(dataWidth, 1/3);
+
     var nodes = graphData.layer_nodes[layer_id];
     var layer_node_geom = new THREE.Geometry();
     var layer_node_meshes = [];
@@ -436,7 +433,7 @@ function createLayer(data, area, layer_id, graphData, coordinateTransformer, dat
 
         nodes[node_id] = source;
 
-        var scale = ( node_degree / maxDegLayer ) * ( ( dataWidth * widthCoeff ) / scaleParam ) 
+        var scale = ( node_degree / maxDegLayer ) * maxSize;
 
         if( node_common == 1){  
             addNode(source, layer_node_geom, 1, graphData, scale, layer_node_meshes);
@@ -658,7 +655,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
         graphData.layer_nodes.push({});
         // NOTE: when changing y here, make sure to change it in transfromTo3D as well
         var y = (-y_range) + (y_step*(i));
-        var res = createLayer(data.layers[i], area, i, graphData, coordinateTransformer, data.width, degreeSelector);
+        var res = createLayer(data.layers[i], area, i, graphData, coordinateTransformer, data.width2, degreeSelector);
         graphData.layer_info[i] = res.info;
     }
 

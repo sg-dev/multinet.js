@@ -215,7 +215,6 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
 
         #get the Layout object here. 
         #http://igraph.org/python/doc/igraph.layout.Layout-class.html
-        widthCoeff = 1
         scl =  int( _l/ 100 ) #int( _l * _l / 10 )
         if ly_alg == "Fruchterman-Reingold":
             ly = igraph.Layout( tuple(map(tuple, pos )) )
@@ -228,11 +227,9 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         elif ly_alg == "Star":
             ly = graph.layout_star()
             scl =  scl * 2
-            widthCoeff = 100
         elif ly_alg == "Random":
             ly = graph.layout_random()
             scl =  scl * 2
-            widthCoeff = 100
         else:
             ly = igraph.Layout( tuple(map(tuple, pos )) )
             scl = scl / 3
@@ -246,20 +243,15 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         print "VIZUALISATION TIMER: returning coordinates :",ly_end
         print "Layouting took :", diff.seconds, "seconds using", ly_alg 
 
-        boundaries = ly.boundaries()
-        ly_width = abs(boundaries[0][0]) + abs(boundaries[1][0])    
-        ly_width = ly_width * widthCoeff
-
         ly.scale( scl * 4)
 
-        print "width:", ly_width, scl
-        print(ly.boundaries())
-
         box = ly.bounding_box()
-        width2 = abs(box.left) + abs(box.right)
+        width = abs(box.left) + abs(box.right)
+
+        print "width:", width, scl
 
         coords = ly.__dict__['_coords']
-        print boundaries[0][0], boundaries[1][0]
+
         #numpy.float64 cannot be jsonified later, so we convert to standard float:
         coords = [ [ float( c[0] )* 1 , float( c[1] ) * 1 ] for c in coords  ]
 
@@ -335,8 +327,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         data['layer_ct'] = len(data)
         data['max_node_ct'] = max_node_ct
         data['unique_keys'] = unique_keys
-        data['width'] = ly_width   
-        data['width2'] = width2
+        data['width'] = width
         data['layout'] = ly_alg
         data['layers'] = [data[l] for l in sorted(layers)]
         data['node_data'] = node_data

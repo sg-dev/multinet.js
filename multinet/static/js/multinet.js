@@ -468,16 +468,16 @@ function createGraph2D(data, renderData) {
     // Limit panning
     renderData.controls.minYPan = -2000;
     renderData.controls.maxYPan = 2000;
-    renderData.controls.minXPan = data.layer_ct * data.width2 * -1.5;
-    renderData.controls.maxXPan = data.layer_ct * data.width2 * 3;
+    renderData.controls.minXPan = data.layer_ct * data.width * -1.5;
+    renderData.controls.maxXPan = data.layer_ct * data.width * 3;
 
     // attempt to center the graph to camera wrt its size
     // inspired by http://stackoverflow.com/questions/13350875/three-js-width-of-view/13351534#13351534
     var vFOV = renderData.camera.fov * Math.PI / 180; 
     var ratio = 2 * Math.tan( vFOV / 2 );
     var aspect = window.innerWidth / window.innerHeight; 
-    var d1 = data.width2 / ratio;
-    var d2 = data.width2 / (ratio * aspect)
+    var d1 = data.width / ratio;
+    var d2 = data.width / (ratio * aspect)
     var dist = Math.max(d1, d2);
 
     renderData.camera.position.z = 1.5 * dist;
@@ -488,12 +488,12 @@ function createGraph2D(data, renderData) {
     renderData.camera.updateProjectionMatrix();
 
      createGraph(data, renderData, function(coords, layer_id) {
-        return transformTo2D(coords, layer_id, data.width2);
+        return transformTo2D(coords, layer_id, data.width);
     }, true);
 }
 
 function createGraph3D(data, renderData, degreeSelector) {
-    var y_range = data.width2;
+    var y_range = data.width;
     var y_step = Math.max( Math.min(y_range / data.layer_ct / 2 , maxLayerDist ) , minLayerDist);
 
     y_range = (data.layer_ct-1) * y_step;
@@ -505,8 +505,8 @@ function createGraph3D(data, renderData, degreeSelector) {
     // Limit panning
     renderData.controls.minYPan = -2000;
     renderData.controls.maxYPan = 2000;
-    renderData.controls.minXPan = data.width2 * -1.5;
-    renderData.controls.maxXPan = data.width2 * 2;
+    renderData.controls.minXPan = data.width * -1.5;
+    renderData.controls.maxXPan = data.width * 2;
 
     // attempt to center the graph to camera wrt its size
     // inspired by http://stackoverflow.com/questions/13350875/three-js-width-of-view/13351534#13351534
@@ -514,7 +514,7 @@ function createGraph3D(data, renderData, degreeSelector) {
     var ratio = 2 * Math.tan( vFOV / 2 );
     var aspect = window.innerWidth / window.innerHeight; 
     var d1 = y_range / ratio;
-    var d2 = data.width2 / (ratio * aspect)
+    var d2 = data.width / (ratio * aspect)
     var dist = Math.max(d1, d2);
 
     renderData.camera.position.z = 1.5 * dist;
@@ -537,7 +537,7 @@ function createGraph3D(data, renderData, degreeSelector) {
 }
 
 function createGraph3DStatic(data, renderData) {
-    var y_range = data.width2;
+    var y_range = data.width;
     var y_step = Math.max( Math.min(y_range / (data.layer_ct-1) / 2 , maxLayerDist ) , minLayerDist);
 
     y_range = data.layer_ct * y_step;
@@ -644,7 +644,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     var area = data.max_node_ct;
     var num_edges = data.edgect1 + data.edgect2;
 
-    var y_range = data.width2; //3000;
+    var y_range = data.width; //3000;
     graphData.y_range = y_range;
     var y_step = Math.max( Math.min(y_range / (data.layer_ct-1) , maxLayerDist ) , minLayerDist);
     graphData.y_step = y_step;
@@ -774,9 +774,9 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     var layerCameraPos = {0: 0};
     for (var i = 1;  i < data.layers.length ; i++) {
         if (i==1) {
-            layerCameraPos[i] = layerCameraPos[i-1] + 400 +  data.width2;
+            layerCameraPos[i] = layerCameraPos[i-1] + 400 +  data.width;
         } else {
-            layerCameraPos[i] = layerCameraPos[i-1] + data.width2;
+            layerCameraPos[i] = layerCameraPos[i-1] + data.width;
         }
     }
 

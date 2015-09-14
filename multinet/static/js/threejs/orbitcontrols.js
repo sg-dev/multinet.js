@@ -510,21 +510,21 @@ THREE.OrbitControls = function ( object, domElement ) {
 		
 		if ( delta > 0 ) {
 			scope.dollyOut();
-			if(object.type == "OrthographicCamera"){
+			if(scope.object.type == "OrthographicCamera"){
 
-				if( object.zoom < 10 ){
-					object.zoom += 0.05;
-					object.updateProjectionMatrix();
+				if( scope.object.zoom < 10 ){
+					scope.object.zoom += 0.05;
+					scope.object.updateProjectionMatrix();
 				}
 
 			}
 		} else {
 			scope.dollyIn();
-			if(object.type == "OrthographicCamera"){
+			if(scope.object.type == "OrthographicCamera"){
 				
-				if( object.zoom > 0.2 ){
-					object.zoom -= 0.05;
-					object.updateProjectionMatrix();
+				if( scope.object.zoom > 0.2 ){
+					scope.object.zoom -= 0.05;
+					scope.object.updateProjectionMatrix();
 				}				
 				
 			}

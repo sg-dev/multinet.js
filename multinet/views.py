@@ -13,7 +13,7 @@ from flask.ext.mail import Message, Mail
 
 ALLOWED_EXTENSIONS = set(['csv',])
 
-HOST = "www.sg.ethz.ch/multinet/"
+HOST = "multinets.io/"
 TIMEFORMAT = "%Y-%m-%d %H:%M:%S"
 
 import sys, traceback

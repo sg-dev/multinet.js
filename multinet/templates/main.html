@@ -9,7 +9,7 @@
     <script src="https://handsontable.com//bower_components/handsontable/dist/handsontable.full.min.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap2.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}">
 
     <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
@@ -17,6 +17,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.fileupload-ui.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-colorpicker.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	
+	  ga('create', 'UA-67937718-1', 'auto');
+	  ga('send', 'pageview');
+
+	</script>
+    
 </head>
 
 <body>
@@ -41,7 +53,7 @@
                 </td>
             </tr-->
 
-            <tr>
+            <!--tr>
                 <td>
                     <a class="btn btn-danger sample" href="{{ url_for('share', dataset='politics_sample_2', hash=None) }}">
                         See sample with 3 layers
@@ -55,7 +67,7 @@
                             Twitter network of CH politicians
                         </a>
                 </td>
-            </tr>
+            </tr-->
 
             <tr>
                 <td>
@@ -88,11 +100,11 @@
                         <span></span>
                       </button>
                       <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                                                            <li role="presentation"><a role="menuitem" tabindex="1" href="#" onclick="displayLayout('Fruchterman-Reingold')">Fruchterman-Reingold (parallel)</a></li>
-                                                            <li role="presentation"><a role="menuitem" tabindex="2" href="#" onclick="displayLayout('Kamada-Kawai')">Kamada-Kawai</a></li>
-                                                            <!--li role="presentation"><a role="menuitem" tabindex="3" href="#" onclick="displayLayout('LGL')">LGL</a></li-->
-                                                            <li role="presentation"><a role="menuitem" tabindex="4" href="#" onclick="displayLayout('Star')">Star</a></li>
-                                                            <li role="presentation"><a role="menuitem" tabindex="5" href="#" onclick="displayLayout('Random')">Random</a></li>
+                      		<li role="presentation"><a role="menuitem" tabindex="1" href="#" onclick="displayLayout('Fruchterman-Reingold')">Fruchterman-Reingold (parallel)</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="2" href="#" onclick="displayLayout('Kamada-Kawai')">Kamada-Kawai</a></li>
+                            <!--li role="presentation"><a role="menuitem" tabindex="3" href="#" onclick="displayLayout('LGL')">LGL</a></li-->
+                            <li role="presentation"><a role="menuitem" tabindex="4" href="#" onclick="displayLayout('Star')">Star</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="5" href="#" onclick="displayLayout('Random')">Random</a></li>
                       </ul>
                     </div>
                 </td>
@@ -189,11 +201,11 @@
                 <td colspan="2">
                     <div id="cameraOptions" class="btn-group" data-toggle="buttons">
                         <label class="btn btn-primary active">
-                            <input type="radio" name="cameraOptions" id="cameraOption1" value="Perspective" autocomplete="off" checked> Perspective
+                            <input type="radio" name="cameraOptions" id="cameraOption1" value="Perspective" autocomplete="off" checked>Perspective
                           </label>
 
                           <label class="btn btn-primary">
-                              <input type="radio" name="cameraOptions" id="cameraOption2" value="Orthographic" autocomplete="off"> Ortographic
+                              <input type="radio" name="cameraOptions" id="cameraOption2" value="Orthographic" autocomplete="off">Ortographic
                           </label>
                     </div>
                 </td>
@@ -214,7 +226,9 @@
             </tr>
 
             <tr>
-                <td colspan="2">
+
+                     	
+                <!--td colspan="2">
                     <div id="degreeOptions" class="btn-group" data-toggle="buttons" >
                       <label class="btn btn-primary active">
                         <input type="radio" name="degreeOptions" id="degreeOption1" value="indegree" autocomplete="off" checked> In-
@@ -228,11 +242,10 @@
                     </div>
 
 
-                </td>
+                </td-->
             </tr>
-            
-
-            <tr style="">
+    
+            <!--tr>
                 <td>
                     <label for="layout">Layout:</label>
                 </td>
@@ -241,10 +254,10 @@
                             <textarea type="text" id="layout" readonly style=""></textarea>
                     </div>
                 </td>
-            </tr>
+            </tr-->
             
             <tr>
-                    <td>
+                <td>
                     <b>Selected Layer:</b>
                 </td>
                 <td class="right selection">
@@ -252,7 +265,7 @@
                       <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
                         <span class="caret"></span>
                       </button>
-                      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                      <ul class="dropdown-menu-layers dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                       </ul>
                     </div>
                 </td>
@@ -286,7 +299,7 @@
             </tr>
 
 
-            <tr>
+            <!--tr>
                 <td>    
                     <label for="selected_node">Selected Node:</label>
                 </td>
@@ -296,10 +309,29 @@
                     </div>
                 </td>
                 
-            </tr>
-            <tr>
+            </tr-->
             
-                    <td>
+
+            
+            <tr>
+                        	
+            	<td><b>Scale nodes:</b></td>
+            	                
+               	<td class="right selection">
+                    <div class="scale-selection dropdown">
+                      <button class="btn btn-default dropdown-toggle-2" type="button" id="ScaleMenu" data-toggle="dropdown" aria-expanded="true">
+                        In Degree
+                      </button>
+                      <ul class="dropdown-menu-scale dropdown-menu" role="menu" aria-labelledby="ScaleMenu">
+                      </ul>
+                    </div>
+                </td>
+                
+            </tr>
+            
+            
+            <tr style="display:none;"> 
+                <td>
                     <b>Share Url:</b>
                 </td>
                 <td>
@@ -311,25 +343,34 @@
                     <p></p>
                 </td>
             </tr>
+            
+            
+            
             <tr>
                 <td colspan="2">
-                    <button id="copy-url" type="submit" class="btn btn-danger delete" style="width:100%;margin:2px 0;" data-clipboard-target="clipboard-text" >
-                        <span>Copy share url to clipboard</span>
+                    <button id="copy-url" type="submit" class="btn btn-danger delete" style="width:100%;margin:5px 0;" data-clipboard-target="clipboard-text" >
+                        <span class="glyphicon glyphicon-copy" style="float:left;margin-top:3px;"></span>
+
+                        <span>Copy url to clipboard</span>
                     </button>
                 </td>
             </tr>
 
             <tr id="clear-selection-tr" style="display: none">
                 <td colspan="2">
-                    <button id="clear-selection" type="submit" class="btn btn-danger delete" style="width:100%;margin:10px 0;">
+                    <button id="clear-selection" type="submit" class="btn btn-danger delete" style="width:100%;margin:0 0 5px 0;">
+                        <span class="glyphicon glyphicon-erase" style="float:left;margin-top:3px;"></span>
+
                         <span>Clear selection</span>
                     </button>
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
-                    <button id="take-snapshot" type="submit" class="btn btn-danger delete" style="width:100%;margin:10px 0;" >
-                        <span>Snapshot</span>
+                    <button id="take-snapshot" type="submit" class="btn btn-danger delete" style="width:100%;margin:0 0 5px 0;" >
+                       	<span class="glyphicon glyphicon-camera" style="float:left;margin-top:3px;"></span>
+
+						<span>Snapshot</span>
                     </button>
                 </td>
             </tr>
@@ -337,36 +378,56 @@
            <tr>
                 <td>
                     <button id="graph-replay" type="submit" class="btn btn-danger delete graph-replay-buttons" style="width:100%" >
+						 <span class="glyphicon glyphicon-play" style="float:left;margin-top:3px;"></span>
                         <span>Replay</span>
                     </button>
 
                     <button id="graph-replay-pause" type="submit" class="btn btn-danger delete graph-replay-buttons" style="width:100%;display:none;" >
+                        <span class="glyphicon glyphicon-pause" style="float:left;margin-top:3px;"></span>
                         <span>Pause</span>
                     </button>
                     
                     <button id="graph-replay-continue" type="submit" class="btn btn-danger delete graph-replay-buttons" style="width:100%;display:none;" >
+						 <span class="glyphicon glyphicon-play" style="float:left;margin-top:3px;"></span>
                         <span>Continue</span>
                     </button>
 
                 </td>
-                <td  class="right selection">
-                    <select id="replay-mode" class="form-control">
-                            <option value="window">Window</option>
-                        <option value="single">Fixed Start</option>
-                    </select>
+
+                
+               	<td class="right selection">
+                    <div class="layer-selection dropdown">
+                      <button class="btn btn-default dropdown-toggle-1" type="button" id="ReplayModeMenu" data-toggle="dropdown" aria-expanded="true">
+                        Window
+                        <!--span class="caret"></span-->
+                      </button>
+                      <ul class="dropdown-menu-replaymode dropdown-menu" role="menu" aria-labelledby="ReplayModeMenu">
+                      </ul>
+                       <input type="hidden" id="replay-mode" name="Replay Mode" value="window">
+                    </div>
                 </td>
+                
+
             </tr>
           <tr>
                 <td>
                     <b>Replay Speed:</b>
                 </td>
-                <td class="right selection">
-                    <select id="replay-speed" class="form-control">
-                        <option value="1">1x</option>
-                        <option value="2">2x</option>
-                        <option value="4">4x</option>
-                    </select>
+
+               	<td class="right selection">
+                    <div class="layer-selection dropdown">
+                      <button class="btn btn-default dropdown-toggle-1" type="button" id="ReplaySpeedMenu" data-toggle="dropdown" aria-expanded="true">
+                        1x
+                        <!--span class="caret"></span-->
+                      </button>
+                      <ul class="dropdown-menu-replayspeed dropdown-menu" role="menu" aria-labelledby="ReplaySpeedMenu">
+                      </ul>
+                       <input type="hidden" id="replay-speed" name="Replay Speed" value="1x">
+
+                    </div>
                 </td>
+                
+                
             </tr>
             <tr>
                 <td colspan="2">
@@ -393,7 +454,7 @@
     <script src="{{ url_for('static', filename='js/spin.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/zerocopy/ZeroClipboard.js') }}"></script>
 
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap-colorpicker.js') }}"></script>
 
     <script src="{{ url_for('static', filename='js/threejs/three-r71.js') }}"></script>
@@ -518,6 +579,11 @@
         redrawGraph(fun);
      });
 
+
+	
+
+
+	/*
     $('#degreeOptions').change(function(e) {
         var selection = $("[name='degreeOptions']:checked").val();
 
@@ -542,6 +608,36 @@
         }
         redrawGraph(fun);
     });
+    */
+    
+    function scaleNodes(selection){
+    	
+    	 $("#ScaleMenu").text(selection);
+
+    	if (selection === "In Degree") {
+            fun = function() {
+                createGraph3D(globalData, getRenderData(), function(v) {
+                    return v[2];
+                });
+            };
+        } else if (selection == "Out Degree") {
+            fun = function() {
+                createGraph3D(globalData, getRenderData(), function(v) {
+                    return v[3];
+                });
+            };
+        } else {
+            fun = function() {
+                createGraph3D(globalData, getRenderData(), function(v) {
+                    return v[4];
+                });
+            };           
+        }
+        redrawGraph(fun);
+    	
+    }
+    
+    
 
     $('#cameraOption1').change(function(e){
         var renderData = getRenderData();
@@ -560,8 +656,9 @@
     });
 
     function redrawGraph(createFn) {
+        
         $('#info-container').addClass('disable-element');
-
+        
         $('#fileupload-div').switchClass("div-center", "div-left" );
         $('#loading-container').show();
         $('#container').hide();
@@ -569,7 +666,7 @@
         if (destroyFunction != null) {
             destroyFunction();
         }
-
+		
         window.setTimeout(function() {
             createFn();
             $('#loading-container').hide();

@@ -644,7 +644,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     var area = data.max_node_ct;
     var num_edges = data.edgect1 + data.edgect2;
 
-    var y_range = data.width; //3000;
+    var y_range = data.width;
     graphData.y_range = y_range;
     var y_step = Math.max( Math.min(y_range / (data.layer_ct-1) , maxLayerDist ) , minLayerDist);
     graphData.y_step = y_step;
@@ -655,7 +655,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
         graphData.layer_nodes.push({});
         // NOTE: when changing y here, make sure to change it in transfromTo3D as well
         var y = (-y_range) + (y_step*(i));
-        var res = createLayer(data.layers[i], area, i, graphData, coordinateTransformer, data.width2, degreeSelector);
+        var res = createLayer(data.layers[i], area, i, graphData, coordinateTransformer, data.width, degreeSelector);
         graphData.layer_info[i] = res.info;
     }
 

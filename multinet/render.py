@@ -248,10 +248,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         box = ly.bounding_box()
         width = abs(box.left) + abs(box.right)
 
-        print "width:", width, scl
-
         coords = ly.__dict__['_coords']
-
         #numpy.float64 cannot be jsonified later, so we convert to standard float:
         coords = [ [ float( c[0] )* 1 , float( c[1] ) * 1 ] for c in coords  ]
 

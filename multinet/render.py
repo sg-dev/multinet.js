@@ -326,7 +326,10 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         data['width'] = width
         data['layout'] = ly_alg
         data['layers'] = [data[l] for l in sorted(layers)]
-        data['node_data'] = node_data
+        if len(node_data) == 0 :
+            data['node_data'] = { n: [] for n in set(sum([data[l]['nodes'] for l in sorted(layers)], [])) }
+        else:
+            data['node_data'] = node_data
         data['data_labels']= data_labels
         data['directed'] = directed_graph
 

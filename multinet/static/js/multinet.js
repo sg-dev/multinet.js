@@ -576,9 +576,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
       }
     }
 
-    if (graphData.node_data_list.length > 0) {
-        $('#table-button').show();
-    }
+    $('#table-button').show();
 
     $("#clear-selection").click(function() {
         clearHighlightedObjects(renderData, graphData);

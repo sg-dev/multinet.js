@@ -528,7 +528,7 @@ function createGraph3D(data, renderData, degreeSelector) {
     renderData.controls.maxDistance = 2 *  dist;
 
     // update camera.far and controls to calculated distance
-    renderData.camera.far = 2.1 * dist;
+    renderData.camera.far = 2.1 * dist + data.width;
     renderData.camera.updateProjectionMatrix();
 
     createGraph(data, renderData, function(coords, layer_id) {
@@ -644,7 +644,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     var area = data.max_node_ct;
     var num_edges = data.edgect1 + data.edgect2;
 
-    var y_range = data.width; //3000;
+    var y_range = data.width;
     graphData.y_range = y_range;
     var y_step = Math.max( Math.min(y_range / (data.layer_ct-1) , maxLayerDist ) , minLayerDist);
     graphData.y_step = y_step;
@@ -655,7 +655,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
         graphData.layer_nodes.push({});
         // NOTE: when changing y here, make sure to change it in transfromTo3D as well
         var y = (-y_range) + (y_step*(i));
-        var res = createLayer(data.layers[i], area, i, graphData, coordinateTransformer, data.width2, degreeSelector);
+        var res = createLayer(data.layers[i], area, i, graphData, coordinateTransformer, data.width, degreeSelector);
         graphData.layer_info[i] = res.info;
     }
 
@@ -767,7 +767,9 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     $( "#year" ).val( data.unique_keys[0] + " - " + data.unique_keys[data.unique_keys.length - 1]);
 
     for (var i = 0; i < data.layer_ct; i++) {
-        $("#info-container .layer-selection ul.dropdown-menu-layers").append('<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="displayLayerInfo('+i+'); return 0;">Layer '+(i+1)+'</a></li>');
+        $("#info-container .layer-selection ul.dropdown-menu-layers")
+            .append('<li role="presentation">'+
+                    '   <a role="menuitem" tabindex="-1" href="#" onclick="displayLayerInfo('+i+'); return 0;">'+data.layers[i].name+'</a></li>');
     }
     
     
@@ -809,6 +811,44 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     	$("ul.dropdown-menu-replayspeed").append(el);
     });
 
+
+    var scales = ['In Degree', 'Out Degree', 'Total Degree'];
+    $.each( scales , function( i, val ) { 
+        var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="scaleNodes(';
+        el += "'" + val + "'";
+        el += '); return 0;">';
+        el += val + '</a></li>';
+        $("ul.dropdown-menu-scale").append(el);
+    });
+    
+    var replayModes = ['single','window']
+    $.each( replayModes , function( i, val ) { 
+        
+        if(val == "window") {
+            var modeName = "Window"
+        } else {
+            var modeName = "Fixed Start"
+        }
+        var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="setReplayMode(';
+        el += "'" + val + "'";
+        el += '); return 0;">';
+        el += modeName + '</a></li>';
+        $("ul.dropdown-menu-replaymode").append(el);
+    });
+    
+    
+    var replaySpeeds = [1,2,4]
+    $.each( replaySpeeds , function( i, val ) { 
+        
+        var speedName = val + "x";
+        
+        var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="setReplaySpeed(';
+        el += val;
+        el += '); return 0;">';
+        el += speedName + '</a></li>';
+        $("ul.dropdown-menu-replayspeed").append(el);
+    });
+
     var oldLayer = 0;
     var layerCameraPos = {0: 0};
     for (var i = 1;  i < data.layers.length ; i++) {
@@ -821,7 +861,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
     displayLayerInfo = function(id) {
         graphData.layer_index = id;
-        $("#info-container .layer-selection button.dropdown-toggle").text("Layer "+(id+1));
+        $("#info-container .layer-selection button.dropdown-toggle").text(data.layers[id].name);
         //console.log($("#info-container .layer-selection button.dropdown-toggle"));
         $("#nrnodes").val(graphData.layer_info[id].node_count);
         $("#nredges").val(graphData.layer_info[id].edge_count);
@@ -897,23 +937,20 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
             }
         }
     }
-    
+
     setReplayMode = function(mode){
-    	
-    	$("#replay-mode").val(mode);
-    	if(mode=="window"){
-    		$("#ReplayModeMenu").text("Window");
-    	}else{
-    		$("#ReplayModeMenu").text("Fixed Start");
-    	}
+        $("#replay-mode").val(mode);
+        if(mode=="window"){
+            $("#ReplayModeMenu").text("Window");
+        }else{
+            $("#ReplayModeMenu").text("Fixed Start");
+        }
     }
 
     setReplaySpeed = function(speed){
-    	
-    	$("#replay-speed").val(speed);
-    	var txt = speed + "x";
-    	$("#ReplaySpeedMenu").text(txt);
-    	
+        $("#replay-speed").val(speed);
+        var txt = speed + "x";
+        $("#ReplaySpeedMenu").text(txt);
     }
 
     $('#graph-replay').click(function(e) {
@@ -1123,9 +1160,9 @@ function showPopup(x, y, node_id, data, labels) {
     if (labels.length == 0) {
         return; 
     } 
-	
+
     table += '<tr>\n<td>ID</td>\n<td>'+ node_id +'</td></tr>';
-    
+
     $.each(data, function(i, obj) {
         table += '<tr>\n<td>'+labels[i+1]+'</td>\n<td>'+obj+'</td></tr>';
     });

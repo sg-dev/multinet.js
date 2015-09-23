@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>MultiViz.js: Multiplex network visualizer</title>
+    <title>Multinet.js: Graph visualizer for dynamic, multilayered graphs</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
@@ -9,7 +9,7 @@
     <script src="https://handsontable.com//bower_components/handsontable/dist/handsontable.full.min.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap2.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}">
 
     <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
@@ -38,21 +38,17 @@
     </div>
 
     <div id="fileupload-div" class="div-center">
-        <table id="instructions" width="230">
-            <tr>
-            <td><p>
-                <b>MultiNetViz.js</b> 
-            </p></td>
-            
-            </tr>
-
-            <!--tr>
-                <td id="how-it-works">
-                    <i class="glyphicon glyphicon-question"></i>
-                    <span>How does it work</span>
-                </td>
-            </tr-->
-
+        <table id="instructions" width="190">
+        	
+	    	<tr>
+	            <td>
+	       	    	    <b>Multinet.js</b> 
+	            	
+	       	   </td>     
+            	<td>
+              	<span id="how-it-works" class="glyphicon glyphicon-question" style="float:right;"></span>
+               	</td>
+           </tr>
             <!--tr>
                 <td>
                     <a class="btn btn-danger sample" href="{{ url_for('share', dataset='politics_sample_2', hash=None) }}">
@@ -70,7 +66,7 @@
             </tr-->
 
             <tr>
-                <td>
+                <td colspan="2">
                     <span class="btn btn-success fileinput-button">
                         <i class="glyphicon glyphicon-plus"></i>
                         <span>Add edgelist</span>
@@ -82,7 +78,7 @@
             </tr>
 
             <tr>
-                <td >
+                <td colspan="2">
                     <span class="btn btn-success fileinput-button fileinput-button-nodes"  style="display:none;">
                         <i class="glyphicon glyphicon-plus"></i>
                         <span>Add node attributes</span>
@@ -94,7 +90,7 @@
             </tr>
 
             <tr>
-                <td>
+                <td colspan="2">
                     <div class="layout-selection dropdown" style="display:none;">
                       <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
                         <span></span>
@@ -111,7 +107,7 @@
             </tr>
 
             <tr>
-                <td>
+                <td colspan="2">
                     <div id="directionOptions" class="btn-group" data-toggle="buttons" style="display:none; margin-top:10px;">
                       <label class="btn btn-primary active">
                         <input type="radio" name="directionOptions" id="directionOption1" value="Directed" autocomplete="off" checked> Directed
@@ -124,7 +120,7 @@
             </tr>
 
             <tr>
-                <td>
+                <td colspan="2">
                     <button id="upload" type="submit" class="btn btn-primary start" style="display:none;">
                         <span>Start upload</span>
                     </button>
@@ -135,47 +131,67 @@
 
     </div>
 
-    <div id="how" style="display:none;">
 
-        <i id="how" class="glyphicon glyphicon-x" style="float:right"></i>
 
-        <table>
-                        
-            <tr>
-                <td>
-                    Upload an edgelist with 4 columns 
-                    <b>source</b>;<b>target</b>;<b>layer</b>;<b>timestamp</b>
-                </td>   
-            </tr>
+        <div class="container" id="how" style="display:none;">
+           	 
+           	<i id="how" class="glyphicon glyphicon-x" style="float:right"></i>
+ 	
+           	<div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>Getting Started</h2>
+                    <!--hr class="star-light"-->
+                </div>
+            </div>
+            
+             <div class="row">
+                <div class="col-lg-12 text-center">
+                    <p></p>
+                </div>
+            </div>
+            
+            
+            <div class="row">
+            
+                <div class="col-sm-8 col-sm-offset-2">
+					<p>
+						<span>
+							Upload an edgelist with four colums where the header is <strong>source</strong>;<strong>target</strong>;<strong>layer</strong>;<strong>timestamp</strong> 
+						</span>
+					</p>
+				
+				</div>
+                <div class="col-sm-8 col-sm-offset-3 discussion-options">
 
-            <tr>
-                <td>
-                    The tool works best if you have <b>WebGL</b> enabled in your browser.
-                </td>   
-            </tr>
+					<p>
+						<span>
+							<strong>layer</strong> stands for the identifier of the layer which the edge belongs to. 
+							The tool supports arbitrary number of layers.
+						</span>
+					</p>
+					<p>
+						<span>
+							<strong>timestamp</strong> can be a date string in <strong>YYYY-MM-DD</strong> format, or just years
+						</span>
+					</p>
+				</div>
+				<div class="col-sm-8 col-sm-offset-2">
+		
+					<p>
+						<span>
+							Once an edgelist is uploaded, the rendering can be started immediately. But there are more options:
+						</span>
+					</p>				
+				 </div>
+				 <div class="col-sm-8 col-sm-offset-3 discussion-options">		
+						<p><strong>Upload node attributes</strong> Uploading node ids used in the edgelist and an arbitrary number of attributes, separated by a <strong>;</strong> 
+							will allow you to navigate through the nodes from within a formatted table.</span></p>
+						<p><strong>Select layout</strong> The Fruchterman-Reingold is the default and it is the parallel version of the standard layout algorithm in the igraph package.</span></p>
+						<p><strong>Choose directedness</strong></p>
+				 </div>        
+            </div>
+        </div>
 
-            <tr>
-                <td>
-                    <b>layer</b> stands for the identifier of the layer which the edge belongs to.
-                    The tool supports arbitrary number of layers.
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <b>timestamp</b> must be a date string in "YYYY-MM-DD" format. 
-                    After the graph is rendered, you can filter the edges based on the timestamp using the slider.                        
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    The common nodes among the layers will be highlighed with blue. 
-                    You can click on nodes and highlight their neighborhoods in all layers.
-                </td>
-            </tr>
-        </table>
-    </div>
 
     <div id="error-container"></div>
 
@@ -454,7 +470,7 @@
     <script src="{{ url_for('static', filename='js/spin.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/zerocopy/ZeroClipboard.js') }}"></script>
 
-    <script src="{{ url_for('static', filename='js/bootstrap2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap-colorpicker.js') }}"></script>
 
     <script src="{{ url_for('static', filename='js/threejs/three-r71.js') }}"></script>
@@ -541,8 +557,8 @@
         }
     }); 
 
-    $('td#how-it-works').click(function(){
-        $('#how').show(400); //slideUp(1000);
+    $('span#how-it-works').click(function(){
+        $('div#how').show(400); 
     }); 
     
     $('i#how').click(function(){

@@ -12,7 +12,7 @@ body {
 }
 
 .disable-element {
-    pointer-events: none;
+    pointer-events: none
     background-color: gray;
     opacity: 0.5;
 }
@@ -35,7 +35,7 @@ table#instructions button{
 
 table#instructions{
 
-}
+} 
 
 .infobox {
     border-radius: 8px;
@@ -44,7 +44,6 @@ table#instructions{
     left: 0;
     display: none;
     padding: 5px;
-    width: 200px;
     background-color: #ccc; 
 }
 
@@ -180,7 +179,7 @@ div#how {
     margin-top: 12%;
     margin-left: 20px;
     z-index: 100000;
-    max-width:300px;
+    max-width:400px;
     height:auto;
     background-color:white;
     border: solid 1px #666;

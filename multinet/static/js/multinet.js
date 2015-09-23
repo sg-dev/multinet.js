@@ -1118,12 +1118,14 @@ function highlightNeighbors(neighborhood_geometry, highlight_geom, graphData, no
     });
 }
 
-function showPopup(x, y, data, labels) {
-    var table = '<table class="table table-striped" style="margin-bottom: 0 !important;">';
+function showPopup(x, y, node_id, data, labels) {
+    var table = '<table class="table table-striped" style="margin-bottom: 0 !important;width:auto !important;">';
     if (labels.length == 0) {
-        return;
-    }
-
+        return; 
+    } 
+	
+    table += '<tr>\n<td>ID</td>\n<td>'+ node_id +'</td></tr>';
+    
     $.each(data, function(i, obj) {
         table += '<tr>\n<td>'+labels[i+1]+'</td>\n<td>'+obj+'</td></tr>';
     });
@@ -1212,7 +1214,7 @@ function makeOnMouseDownHandler(renderData, graphData) {
             $("#clear-selection-tr").show();
             var selected_node = nearest_intersection.object;
 
-            showPopup(event.clientX, event.clientY, graphData.node_data[selected_node.node_id], graphData.data_labels);
+            showPopup(event.clientX, event.clientY, selected_node.node_id, graphData.node_data[selected_node.node_id], graphData.data_labels);
 
             update_scene = true;
 

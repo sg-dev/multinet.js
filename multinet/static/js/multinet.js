@@ -528,7 +528,7 @@ function createGraph3D(data, renderData, degreeSelector) {
     renderData.controls.maxDistance = 2 *  dist;
 
     // update camera.far and controls to calculated distance
-    renderData.camera.far = 2.1 * dist;
+    renderData.camera.far = 2.1 * dist + data.width;
     renderData.camera.updateProjectionMatrix();
 
     createGraph(data, renderData, function(coords, layer_id) {

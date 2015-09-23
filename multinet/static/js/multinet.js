@@ -767,46 +767,47 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     $( "#year" ).val( data.unique_keys[0] + " - " + data.unique_keys[data.unique_keys.length - 1]);
 
     for (var i = 0; i < data.layer_ct; i++) {
-        $("#info-container .layer-selection ul.dropdown-menu-layers").append('<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="displayLayerInfo('+i+'); return 0;">Layer '+(i+1)+'</a></li>');
+        $("#info-container .layer-selection ul.dropdown-menu-layers")
+            .append('<li role="presentation">'+
+                    '   <a role="menuitem" tabindex="-1" href="#" onclick="displayLayerInfo('+i+'); return 0;">'+data.layers[i].name+'</a></li>');
     }
-    
-    
+
+
     var scales = ['In Degree', 'Out Degree', 'Total Degree'];
     $.each( scales , function( i, val ) { 
-    	var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="scaleNodes(';
-    	el += "'" + val + "'";
-    	el += '); return 0;">';
-    	el += val + '</a></li>';
-    	$("ul.dropdown-menu-scale").append(el);
+        var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="scaleNodes(';
+        el += "'" + val + "'";
+        el += '); return 0;">';
+        el += val + '</a></li>';
+        $("ul.dropdown-menu-scale").append(el);
     });
     
     var replayModes = ['single','window']
     $.each( replayModes , function( i, val ) { 
-    	
-    	if(val == "window"){
-    		var modeName = "Window"
-    	}else{
-    		var modeName = "Fixed Start"
-    	}
-    	
-    	var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="setReplayMode(';
-    	el += "'" + val + "'";
-    	el += '); return 0;">';
-    	el += modeName + '</a></li>';
-    	$("ul.dropdown-menu-replaymode").append(el);
+        
+        if(val == "window") {
+            var modeName = "Window"
+        } else {
+            var modeName = "Fixed Start"
+        }
+        var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="setReplayMode(';
+        el += "'" + val + "'";
+        el += '); return 0;">';
+        el += modeName + '</a></li>';
+        $("ul.dropdown-menu-replaymode").append(el);
     });
     
     
-	var replaySpeeds = [1,2,4]
+    var replaySpeeds = [1,2,4]
     $.each( replaySpeeds , function( i, val ) { 
-    	
-    	var speedName = val + "x";
-    	
-    	var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="setReplaySpeed(';
-    	el += val;
-    	el += '); return 0;">';
-    	el += speedName + '</a></li>';
-    	$("ul.dropdown-menu-replayspeed").append(el);
+        
+        var speedName = val + "x";
+        
+        var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="setReplaySpeed(';
+        el += val;
+        el += '); return 0;">';
+        el += speedName + '</a></li>';
+        $("ul.dropdown-menu-replayspeed").append(el);
     });
 
     var oldLayer = 0;
@@ -821,7 +822,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
     displayLayerInfo = function(id) {
         graphData.layer_index = id;
-        $("#info-container .layer-selection button.dropdown-toggle").text("Layer "+(id+1));
+        $("#info-container .layer-selection button.dropdown-toggle").text(data.layers[id].name);
         //console.log($("#info-container .layer-selection button.dropdown-toggle"));
         $("#nrnodes").val(graphData.layer_info[id].node_count);
         $("#nredges").val(graphData.layer_info[id].edge_count);
@@ -899,21 +900,21 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     }
     
     setReplayMode = function(mode){
-    	
-    	$("#replay-mode").val(mode);
-    	if(mode=="window"){
-    		$("#ReplayModeMenu").text("Window");
-    	}else{
-    		$("#ReplayModeMenu").text("Fixed Start");
-    	}
+        
+        $("#replay-mode").val(mode);
+        if(mode=="window"){
+            $("#ReplayModeMenu").text("Window");
+        }else{
+            $("#ReplayModeMenu").text("Fixed Start");
+        }
     }
 
     setReplaySpeed = function(speed){
-    	
-    	$("#replay-speed").val(speed);
-    	var txt = speed + "x";
-    	$("#ReplaySpeedMenu").text(txt);
-    	
+        
+        $("#replay-speed").val(speed);
+        var txt = speed + "x";
+        $("#ReplaySpeedMenu").text(txt);
+        
     }
 
     $('#graph-replay').click(function(e) {
@@ -1123,7 +1124,7 @@ function showPopup(x, y, node_id, data, labels) {
     if (labels.length == 0) {
         return; 
     } 
-	
+    
     table += '<tr>\n<td>ID</td>\n<td>'+ node_id +'</td></tr>';
     
     $.each(data, function(i, obj) {

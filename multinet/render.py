@@ -109,10 +109,11 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
             timestamps = len(edges["layer"]) * ['00-00-0000']
         else:
             timestamps = edges["timestamp"]
-        layers_str = [ "l%s" % ( layer, ) for layer in set( edges["layer"] ) ] 
         layers = sorted([ "%s" % ( layer, ) for layer in set( edges["layer"] ) ])
 
         unique_keys = sorted( list( set(  timestamps ) ) ) 
+
+        print(layers)
 
         if len(unique_keys) < 100:
             nrbins = len(unique_keys)
@@ -147,10 +148,6 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         unique_keys = sorted( list( set(  timestamps ) ) )
 
         for layer in layers:
-            _layer_str = "l%s" % (layer,)
-
-            #disable usage of namedtuple now in favor of pickling..
-            #_layer_data = collections.namedtuple(_layer_str, ['edges', 'nodes','edge_ct','node_ct','in_degrees','coords'], verbose=False)
             _layer_data = {}
 
             edges_tmp = edges[edges["layer"] == layer]
@@ -263,6 +260,8 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         layer_neighborhoods = []
         for i,_l in enumerate(layers):
             _layer_data = data[_l]
+
+            _layer_data['name'] = _l
 
             try:
                 _layer_data_next = data[ layers[i+1] ]

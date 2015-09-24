@@ -121,18 +121,8 @@ def register():
     email = request.form.get('email', None)
     institute = request.form.get('institute', None)
     message = request.form.get('message', None)
-
-    app =Flask(__name__)
-    app.config.update(
-        DEBUG=False,
-        #EMAIL SETTINGS
-        MAIL_SERVER='mail.ethz.ch',
-        MAIL_PORT=587,
-        MAIL_USE_TLS=True,
-        MAIL_USERNAME = 'sg-it@ethz.ch',
-        MAIL_PASSWORD = 'cTQyBwef95@Q7'
-        )
     
+    app =Flask(__name__)
     mail=Mail(app)
 
     _subject = "[Multinet] Request Access Form: %s, %s" % ( name, email )

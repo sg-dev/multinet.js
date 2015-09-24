@@ -14,31 +14,35 @@ VISUALIZATION_DIR = os.path.join(
 
 import multinet.views
 
-#notification mails to registered users
+try:
+    import multinet.secrets
+    """
+    app.config['MAIL_SERVER'] = secrets.MAIL_SERVER
+    app.config['MAIL_PORT'] = secrets.MAIL_PORT
+    app.config['MAIL_USE_TLS'] = secrets.MAIL_USE_TLS
+    app.config['MAIL_USERNAME'] = secrets.MAIL_USERNAME
+    app.config['MAIL_PASSWORD'] = secrets.MAIL_PASSWORD
+    """
+    app.config.update(
+        DEBUG=False,
+        #EMAIL SETTINGS
+        MAIL_SERVER = secrets.MAIL_SERVER,
+        MAIL_PORT = secrets.MAIL_PORT,
+        MAIL_USE_TLS = secrets.MAIL_USE_TLS,
+        MAIL_USERNAME = secrets.MAIL_USERNAME,
+        MAIL_PASSWORD = secrets.MAIL_PASSWORD
+    )
 
-"""
-app.config['MAIL_SERVER'] = 'mail.ethz.ch' 
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-#MAIL_USE_SSL : default False
-#MAIL_DEBUG : default app.debug
-app.config['MAIL_USERNAME'] = 'sg-it@ethz.ch' 
-app.config['MAIL_PASSWORD'] = 'cTQyBwef95@Q7' 
-#DEFAULT_MAIL_SENDER : default None
+except:
+    app.config['MAIL_SERVER'] = None
+    app.config['MAIL_PORT'] = None
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_USERNAME'] = None
+    app.config['MAIL_PASSWORD'] = None
 
 
-ADMINS = ['semre@ethz.ch']
-"""
-"""
 
-if not app.debug:
-    import logging
-    from logging.handlers import SMTPHandler
-    mail_handler = SMTPHandler('mail.ethz.ch',
-                               'sg-it@ethz.ch',
-                               ADMINS, 'YourApplication Failed', 
-                               credentials = ( "sg-it@ethz.ch", "cTQyBwef95@Q7" ))
-    mail_handler.setLevel(logging.ERROR)
-    app.logger.addHandler(mail_handler)
-    
-""" 
+
+
+
+

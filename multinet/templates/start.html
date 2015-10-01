@@ -285,12 +285,12 @@
             </div>
             <br/>
             <div class="row">
-                <div class="col-sm-6 portfolio-item">
+                <div class="col-sm-4 portfolio-item">
                     <a href="{{ url_for('share', dataset='politics_ch_twitter', hash=None) }}" target="_blank" class="portfolio-link" data-toggle="modal">
                         <div class="caption">
                             <div class="caption-content">
                                 <i class="fa fa-search-plus"></i>
-                                <p>340 nodes, 20,404 edges</p>
+                                <p>340 nodes, 20,404 edges, 3 layers</p>
                             </div>
                         </div>
                         <img src="{{ url_for('static', filename='img/MNtwitter.jpeg') }}" class="img-responsive" alt="">
@@ -298,17 +298,30 @@
                 </div>
                 
 
-                <div class="col-sm-6 portfolio-item">
+                <div class="col-sm-4 portfolio-item">
                     <a href="{{ url_for('share', dataset='politics_sample_2', hash=None) }}" target="_blank"  class="portfolio-link" data-toggle="modal">
                         <div class="caption">
                             <div class="caption-content">
                                 <i class="fa fa-search-plus"></i>
-                                <p>2,697 nodes, 10K edges</p>
+                                <p>2,697 nodes, 10,000 edges, 3 layers</p>
                             </div>
                         </div>
                         <img src="{{ url_for('static', filename='img/MN3Layers.jpeg') }}" class="img-responsive" alt="">
                     </a>
                 </div>
+                
+                <div class="col-sm-4 portfolio-item">
+                    <a href="{{ url_for('share', dataset='uk_metro_subset', hash=None) }}" target="_blank"  class="portfolio-link" data-toggle="modal">
+                        <div class="caption">
+                            <div class="caption-content">
+                                <i class="fa fa-search-plus"></i>
+                                <p>6,131 nodes, 14,899 edges, 6 layers</p>
+                            </div>
+                        </div>
+                        <img src="{{ url_for('static', filename='img/MNuksubway.jpeg') }}" class="img-responsive" alt="">
+                    </a>
+                </div>
+                
             </div>
         </div>
     </section>

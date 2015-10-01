@@ -33,7 +33,7 @@ app.url_map.converters['regex'] = RegexConverter
 
 @app.route("/<regex('[a-zA-Z0-9]{6,6}'):token>/")
 def client(token):
-    print "token", token
+    print "token from url", token
     #TODO: first check to see if this is a valid url
     if check_token(token): 
         return render_template('main.html')
@@ -65,6 +65,9 @@ def data(dataset, hash=None):
         os.path.join(base_path, '{}_node_data.csv'.format(dataset))
     )
 
+    if "errors" in data:
+        return jsonify(graph_ready=False, errors=data["errors"])
+    
     return jsonify(url=url_for('share', dataset=dataset, hash=hash), **data)
 
 
@@ -78,8 +81,7 @@ def upload_file():
     
     #check if client reached quota
     if not check_quota():
-        return render_template('main.html', errors = "You can upload one edgelist every 10 minutes.")
-
+        return jsonify(graph_ready=False, errors="Quota Reached. You can upload one edgelist every 10 minutes.")
         
     edge_file = request.files.get('file', None)
     data_file = request.files.get('nodefile', None)
@@ -103,6 +105,10 @@ def upload_file():
 
     layout_algorithm = request.form.get('layout_algorithm', 'Fruchterman-Reingold')
     data = graph_layout(path, data_path, directed_graph=request.form.get('is_directed', 'true')=='true', ly_alg=layout_algorithm)
+    
+    if "errors" in data:
+        return jsonify(graph_ready=False, errors=data["errors"])
+    
     return jsonify(url=url_for('share', dataset=dataset, hash=hash), **data)
 
 
@@ -177,7 +183,7 @@ def google_url_shortener(longUrl):
 
 import sqlite3
 from flask import g # _app_ctx_stack as g
-from flask import _app_ctx_stack as appstack
+from flask import session as _session #_app_ctx_stack as appstack
 
 
 DATABASE = '/srv/www/htdocs/multinet.js/users.db'
@@ -232,8 +238,13 @@ def query_db(query, args=(), one=False, type ="select"):
 
 def check_quota():
 
-    token = getattr(appstack, '_current_token', None)
+    #token = getattr(appstack, '_current_token', None)
+    try:
+        token = _session['_current_token']
+    except:
+        token = None
     print "checking quota for", token
+    print _session.__dict__
 
     if token is None:
         return False
@@ -247,6 +258,7 @@ def check_quota():
         _now = datetime.now()
         _diff = _now - _last
         if _diff.seconds < 60 * 10:
+            print token, ": last upload in less than 10 mins ago"
             return False
    
     #update last_access_date
@@ -256,16 +268,20 @@ def check_quota():
 
 def check_token(token):
     
-    ct = getattr(appstack, '_current_token', None)
-    print "current token" , ct
-    
+    #ct = getattr(appstack, '_current_token', None)
+    try:
+        ct = _session['_current_token']
+    except:
+        ct = None
     udata = query_db('select * from users where token = ?', [token], one=True)
-    
+
+    print "current token" , ct, udata
     if udata:
-        appstack._current_token = token
+        _session['_current_token'] = token
+        print _session.__dict__
         return True
     
-    appstack._current_token = None
+    #appstack._current_token = None
     return False
 
 

@@ -37,7 +37,7 @@
           <span>menu»</span>
     </div>
 
-    <div id="fileupload-div" class="div-center">
+    <div id="fileupload-div" class="">
         <table id="instructions" width="190">
         	
 	    	<tr>
@@ -205,9 +205,15 @@
     </div>
 
     <div id="data-table" style="position: fixed; width: 400px; float: left; margin-bottom: 50px; margin-top: 50px; margin-right: 40px; overflow: auto; height: 800px; display: none;"></div>
-    <div id="table-button" style="position: fixed; bottom: 3px; float:left; display: none;">
+    <!--div id="table-button" style="position: fixed; bottom: 3px; float:left; display: none;">
         <a id="show-table" href="#">Show table</a>
         <a id="hide-table" style="display: none;" href="#">Hide table</a>
+    </div-->
+    
+    <div id="table-button">
+          <span id="show-table">Data view»</span>
+          <span id="hide-table" style="display: none;" href="#">«Data view</a>
+
     </div>
 
     <div id="info-container">
@@ -508,7 +514,7 @@
     var spinner = new Spinner(opts).spin(target);
 
     var globalData;
-    
+
     //check if this is a url specific for a visualization
     {% if fetch_url is defined %}
         $('div#fileupload-div').hide(); 
@@ -522,14 +528,27 @@
                 $('#loading-container').show();
             },
             success:function(data){
-                $('#loading-container').hide();        
-                createGraph3D(data, getRenderData());
-                globalData = data;
+            	
+            	
+                if(data.result.errors == null){ 
+                    $('#loading-container').hide();        
+                	createGraph3D(data, getRenderData());
+                	globalData = data;       
+                }else{
+                    $('#loading-container').hide();
+                    $('#error-container').show();
+                    $('#error-container').text( data.result.errors);
+					$('#error-container').fadeTo( 10000, 0 );
+                }
+
+  
             }
         });
     {% else %}
          $('div#fileupload-div').show();
     {% endif %}
+
+
 
     function styleGraphLoaded(){
         $('#loading-container').hide();
@@ -537,7 +556,7 @@
 
         $('button#upload').hide();
 
-        $('#fileupload-div').switchClass("div-center", "div-left" );     
+        //$('#fileupload-div').switchClass("div-center", "div-left" );     
         $('#fileupload-div').slideUp(1000);
 
         $('#display-instructions').show();
@@ -675,7 +694,7 @@
         
         $('#info-container').addClass('disable-element');
         
-        $('#fileupload-div').switchClass("div-center", "div-left" );
+        //$('#fileupload-div').switchClass("div-center", "div-left" );
         $('#loading-container').show();
         $('#container').hide();
 
@@ -775,7 +794,7 @@
                         data.formData["layout_algorithm"] = layout_algorithm;
                     }
 
-                    $('#fileupload-div').switchClass("div-center", "div-left" );
+                    //$('#fileupload-div').switchClass("div-center", "div-left" );
                     $('#fileupload-div').show();
 
                     $('div.layout-selection').hide();
@@ -790,6 +809,7 @@
                     }
                     $('#loading-container').show();
                 });
+                
             },
             done: function (e, data) {
 
@@ -799,16 +819,9 @@
                     globalData = data.result;           
                 }else{
                     $('#loading-container').hide();
-                    $('#progress').hide();
                     $('#error-container').show();
-                    $('#error-container').text( data.result.errors );
-                    $('#fileupload-div').switchClass("div-center", "div-left" );
-                            $('#fileupload-div').show();
-
-                    setTimeout( function() {
-                        $('#error-container').hide(1000);
-                    }, 5000 );
-
+                    $('#error-container').text( data.result.errors);
+					$('#error-container').fadeTo( 10000, 0 );
                 }
 
             },

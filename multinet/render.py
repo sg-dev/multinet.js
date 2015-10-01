@@ -92,14 +92,18 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
     node_data = {}
 
     try:
-        if _nd_path:
-            with open(_nd_path) as csvfile:
-                reader = csv.reader(csvfile, delimiter=';')
-                data_labels = reader.next()
+        #if _nd_path:
+        with open(_nd_path) as csvfile:
+            reader = csv.reader(csvfile, delimiter=';')
+            data_labels = reader.next()
 
-                for row in reader:
-                    node_data[row[0]] = row[1:]
+            for row in reader:
+                node_data[row[0]] = row[1:]
 
+    except Exception,e:
+        pass
+    
+    try:
         with open(_path) as f:
             reader = csv.reader(f, delimiter=';')
             if len(reader.next()) == 3:

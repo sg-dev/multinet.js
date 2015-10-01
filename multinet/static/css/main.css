@@ -56,7 +56,6 @@ table#instructions{
 
 #slider {
     min-width:65%;
-    height:15px;
     float:right;
     margin:3px 10px 5px 10px ;
 }              
@@ -98,7 +97,7 @@ table#instructions{
 }
 
 #slider-container input {
-    width:180px;height:15px;float:left;
+    width:180px;sfloat:left;
     border:0; color:black;/*#f6931f*/ 
     font-weight:bold;
     text-align:center;
@@ -131,15 +130,16 @@ table#instructions{
 
 #error-container {
     position: fixed;
-    top: 100px;
-    left: 400px;
+    top: 20px;
+    left: 270px;
     z-index: 1000000;
-    width:250px;
+    width:400px;
     height:auto;
     padding:20px;
     text-align:center;
     color: #990000;
-    background-color:#ccc;
+    background-color:white;
+    font-size:28px;
     border: solid 1px #666;
     -moz-border-radius: 5px;
     border-radius: 10px;
@@ -152,9 +152,11 @@ table#instructions{
     max-width:350px;
     height:auto;
     background-color:transparent;
-    border: solid 1px #666;
+    
+    /*border: solid 1px #666;
     -moz-border-radius: 5px;
     border-radius: 10px;
+    */
     padding:5px 10px 10px 10px;
     display: none;
 }
@@ -176,16 +178,16 @@ a.sample {
 
 div#how {
     position: absolute;
-    margin-top: 12%;
-    margin-left: 20px;
+    margin-top: 10px;
+    margin-left: 270px;
     z-index: 100000;
-    max-width:400px;
+    max-width:350px;
     height:auto;
     background-color:white;
     border: solid 1px #666;
     -moz-border-radius: 5px;
     border-radius: 10px;
-    padding:5px 20px 10px 20px;
+    padding:5px 10px 5px 10px;
 }
 
 div#info-container{
@@ -290,6 +292,19 @@ li {
     color: #DA4F49;
     cursor:pointer;
 }
+
+#table-button{
+    font-weight:bold;
+    width:100px;
+    position:absolute;
+    position: fixed; bottom: 3px; float:left;display:none; 
+}
+
+#table-button:hover {
+    color: #DA4F49;
+    cursor:pointer;
+}
+
 
 span.fileinput-button {
     margin-top:10px;

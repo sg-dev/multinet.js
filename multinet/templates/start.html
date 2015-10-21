@@ -30,8 +30,6 @@
     <![endif]-->
     
 
-    <link href="https://handsontable.com//bower_components/handsontable/dist/handsontable.full.min.css" rel="stylesheet">
-    <script src="https://handsontable.com//bower_components/handsontable/dist/handsontable.full.min.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}">
@@ -437,6 +435,16 @@
                                 <p class="help-block text-danger"></p>
                             </div>
                         </div>
+                        <div class="row control-group">
+                            <div class="form-group col-xs-12 floating-label-form-group controls">
+   								<input type="checkbox" name="terms" required data-validation-required-message="You must agree to the terms and conditions">
+   									<span class="terms">I agree to the <b class="terms">terms and conditions</b></span>
+   								</input>
+                                <p class="help-block text-danger"></p>
+                            </div>
+                        </div>
+                        
+                        
                         <br>
                         <div id="success"></div>
                         <div class="row">
@@ -445,6 +453,27 @@
                             </div>
                         </div>
                     </form>
+                    
+                    <div id="terms">
+                   		<div class="row">
+            
+            	           	<i id="terms" class="glyphicon glyphicon-remove" style="float:right;margin-right:20px;"></i>
+            	        </div>
+            	        <div class="row">
+            	        	
+			                <div class="col-sm-8 col-sm-offset-2">
+								<p>
+									<span>
+										Chair of Systems Design is not liable for any unexpected exposure of the resulting plots.
+										Chair of Systems Design will not store or make use of any of the uploaded data. The user data can be deleted on the user's request, or within 24 hours after the upload 
+									</span>
+								</p>
+							
+							</div>
+						</div>
+                    </div>
+                    
+                    
                 </div>
             </div>
         </div>
@@ -543,6 +572,20 @@
     <script src="{{ url_for('static', filename='js/freelancer.js') }}"></script>
 
 
+
+
+	<script>
+	    $('i#terms').click(function(){
+        	$('div#terms').hide(100); //slideUp(1000);
+    	}); 
+	    $('div#terms').click(function(){
+    	    $('div#terms').hide(100); //slideUp(1000);
+	    }); 
+
+	    $('b.terms').click(function(){
+    	    $('div#terms').show(100); //slideUp(1000);
+	    }); 
+	</script>
 
 </body>
 

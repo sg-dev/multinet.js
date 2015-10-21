@@ -32,7 +32,7 @@ try:
         SECRET_KEY = secrets.SECRET_KEY
     )
 
-    if not app.debug:
+    if False: #not app.debug:
         import logging
         from logging.handlers import SMTPHandler
         
@@ -57,7 +57,26 @@ except:
 
 
 
+#celery support
+try:
+    from celery import Celery
+ 
+    #app.config['CELERY_BROKER_URL'] = "amqp://guest:guest@localhost:5672//"
+    #app.config['CELERY_RESULT_BACKEND'] = "amqp" # ://guest:guest@localhost:5672//"
 
-
+    celery = Celery(app.name, broker="amqp://guest:guest@localhost:5672//",unclude=["multinet.render"])
+    #celery.conf.update(app.config)
+    
+    celery.config.update(
+        #USE_CELERY=True,
+        CELERY_RESULT_BACKEND="amqp",
+        #CELERY_BROKER_URL="amqp://guest:guest@localhost:5672//"
+    )
+except:
+    
+    app.config.update(
+        USE_CELERY=False
+    )
+    
 
 

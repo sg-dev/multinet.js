@@ -6,10 +6,34 @@ from flask import render_template, jsonify, Flask, request, redirect, url_for
 from werkzeug import secure_filename
 
 from multinet import app, VISUALIZATION_DIR
+import multinet.render
+import celery
 from multinet.render import graph_layout
 
 from flask.ext.mail import Message, Mail
 
+
+"""
+#celery support
+try:
+    from celery import Celery
+    from multinet import app
+    app.config.update(
+        USE_CELERY=True
+    )
+    
+    app.config['CELERY_BROKER_URL'] = "amqp://guest:guest@localhost:5672//"
+    app.config['CELERY_RESULT_BACKEND'] = "amqp" # ://guest:guest@localhost:5672//"
+
+    celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
+    print "configured app"
+except:
+    
+    app.config.update(
+        USE_CELERY=False
+    )
+"""
 
 ALLOWED_EXTENSIONS = set(['csv',])
 
@@ -60,12 +84,27 @@ def data(dataset, hash=None):
     else:
         base_path = VISUALIZATION_DIR
 
+    #if app.config['USE_CELERY']
     data = graph_layout(
         os.path.join(base_path, '{}.csv'.format(dataset)),
         os.path.join(base_path, '{}_node_data.csv'.format(dataset))
     )
+    """
+    res = graph_layout.delay(
+        os.path.join(base_path, '{}.csv'.format(dataset)),
+        os.path.join(base_path, '{}_node_data.csv'.format(dataset))
+    )
 
-    if "errors" in data:
+    print "bend",res.backend
+    
+    print "app",res.app
+    print "astuple",res.as_tuple()
+    data = res.get()
+    print "data",data
+    #for d in res.collect(): #(timeout=None):
+    #    print "d",d
+    """
+    if "errors" in data.keys():
         return jsonify(graph_ready=False, errors=data["errors"])
     
     return jsonify(url=url_for('share', dataset=dataset, hash=hash), **data)
@@ -95,6 +134,7 @@ def upload_file():
         edge_file.stream.seek(0)
         path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         edge_file.save(path)
+        ret = insert_file(path)
     else:
         return jsonify(graph_ready=False, errors='Invalid file uploaded. Only .csv files are supported')
 
@@ -106,7 +146,9 @@ def upload_file():
     layout_algorithm = request.form.get('layout_algorithm', 'Fruchterman-Reingold')
     data = graph_layout(path, data_path, directed_graph=request.form.get('is_directed', 'true')=='true', ly_alg=layout_algorithm)
     
-    if "errors" in data:
+    #print "dat",data
+    if "errors" in data.keys():
+        print "ERRORS",data["errors"]
         return jsonify(graph_ready=False, errors=data["errors"])
     
     return jsonify(url=url_for('share', dataset=dataset, hash=hash), **data)
@@ -162,6 +204,57 @@ def register():
 
 
 
+@app.route('/flush/')
+def delete_user_data():
+
+    try:
+        token = _session['_current_token']
+    except:
+        token = None
+        return jsonify(errors="Couldn't delete data: No token found.")
+    
+    try:
+        args = [ 1, token ]
+        ret = query_db( "update files set removed=? where token=?", args, type = "delete" )  
+        _fdata = query_db('select * from files where token = ?', [token], one=False)
+        
+        fct = 0
+        
+        for _f in _fdata:
+            _file = _f[1]
+            print "deleting file for", token, _file
+            if os.path.isfile(_file):
+                
+                try:
+                    os.remove( _file )
+                    fct += 1
+                    print fct
+                except OSError, e:
+                    print ("Error: %s - %s." % (e.filename,e.strerror))
+                """
+                print 
+                cmd = "rm -rf %s" % ( _file )
+                ret = subprocess.call( [cmd] )
+                print ret
+                
+                except Exception,e:
+                    print "file remove error", _file
+                """
+        
+    except Exception,e:
+        print "file delete error",e
+        return jsonify(errors="Couldn't delete data: %s" % ("No data for this account.",) )
+    
+    if fct == 0:
+        print "ret0"
+        return jsonify(errors="Couldn't delete data: %s" % ("No data for this account.",) )
+    else:
+        
+        print "ret1"
+        return jsonify(success=True )
+    
+    
+    
 
 
 #Incomplete: use API properly
@@ -182,10 +275,10 @@ def google_url_shortener(longUrl):
 ##################DB OPERATIONS################
 
 import sqlite3
-from flask import g # _app_ctx_stack as g
+from flask import g 
 from flask import session as _session #_app_ctx_stack as appstack
 
-
+#TODO: use canonical path here, and read it from appconfig 
 DATABASE = '/srv/www/htdocs/multinet.js/users.db'
 
 
@@ -197,6 +290,10 @@ def get_db():
         db = g._database = sqlite3.connect(DATABASE) #_tmp #connect_to_database()
     try:
         db.execute('''CREATE TABLE users (email text, name text, message text,institute text, token text, date_created text, date_last_access text )''')
+    except:
+        pass
+    try:
+        db.execute('''CREATE TABLE files (token text, file text, removed integer  )''')
     except:
         pass
     print "app context db", db
@@ -221,9 +318,9 @@ def query_db(query, args=(), one=False, type ="select"):
             
             if type == "select":
                 if one:
-                    rv = cur.fetchall()
-                else:
                     rv = cur.fetchone()
+                else:
+                    rv = cur.fetchall()
                 return rv if len(rv) > 0 else False 
             else:
                 return True
@@ -252,7 +349,7 @@ def check_quota():
     udata = query_db('select * from users where token = ?', [token], one=True)
     
     #last access time is in the last item 
-    _dstr = udata[0][-1]
+    _dstr = udata[-1]
     if _dstr != '':
         _last = datetime.strptime(_dstr, TIMEFORMAT )
         _now = datetime.now()
@@ -301,4 +398,18 @@ def insert_user( udata ):
 
     print "inserted user", ret
     return True
+
+
+
+def insert_file( path ):
+    try:
+        token = _session['_current_token']
+        #maybe instead of token, use email as key
+    except:
+        return False
     
+    args = [ token, path, 0 ]
+    ret = query_db( "insert into files VALUES (?,?,?)", args, type = "insert" )  
+
+    print "inserted file", path
+    return True

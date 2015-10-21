@@ -16,6 +16,9 @@ from itertools import groupby
 
 from multinet import VISUALIZATION_DIR
 
+import celery
+
+    
 
 SUPPORTED_LAYOUTS = ['Fruchterman-Reingold','Kamada-Kawai', 'LGL', 'Random', 'Star']
 CACHE_PATH_TEMPLATE = '/tmp/multinet_{}.cpickle'
@@ -50,7 +53,7 @@ def cache_data(path, data, options):
     with open(get_cache_path(path, options), 'wb') as f:
         cPickle.dump(data, f, protocol=2)
 
-
+#@celery.task
 def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", directed_graph=True):
 
     if ly_alg not in SUPPORTED_LAYOUTS:

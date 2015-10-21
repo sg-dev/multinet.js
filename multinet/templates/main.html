@@ -5,10 +5,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
-    <link href="https://handsontable.com//bower_components/handsontable/dist/handsontable.full.min.css" rel="stylesheet">
-    <script src="https://handsontable.com//bower_components/handsontable/dist/handsontable.full.min.js"></script>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+    <!--link href="https://handsontable.com//bower_components/handsontable/dist/handsontable.full.min.css" rel="stylesheet">
+    <script src="https://handsontable.com//bower_components/handsontable/dist/handsontable.full.min.js"></script-->
+    <script src="{{ url_for('static', filename='js/handsontable.full.min.js') }}"></script>
+    <link href="{{ url_for('static', filename='css/handsontable.full.min.css') }}" rel="stylesheet">
 
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}">
 
@@ -129,13 +131,44 @@
 
         </table> 
 
+
+		<table>
+            <tr>
+
+                    
+                    
+                <td>
+                	
+                	
+                	
+                    <button id="delete-data" type="submit" class="btn btn-danger delete" style="">
+                        <span>Delete my data</span>
+                    </button>
+                    
+                    
+                </td>
+                
+                <td>
+                	<span id="delete-indicator-ok">
+                		<i class="glyphicon glyphicon-ok" style=""></i>
+                	</span>
+                	
+                	<span id="delete-indicator-error">
+                		<i class="glyphicon glyphicon-remove" style=""></i>
+                	</span>
+                </td>            	
+                
+            </tr>
+
+        </table> 
+
     </div>
 
 
 
         <div class="container" id="how" style="display:none;">
            	 
-           	<i id="how" class="glyphicon glyphicon-x" style="float:right"></i>
+           	<i id="how" class="glyphicon glyphicon-remove" style="float:right"></i>
  	
            	<div class="row">
                 <div class="col-lg-12 text-center">
@@ -217,11 +250,17 @@
     </div>
 
     <div id="info-container">
+		<span class="glyphicon glyphicon-minus minimize" id="minimize-info" style="color:black;float:right;margin-top:-18px; margin-right:-8px;">
+        </span>
+        <span class="glyphicon glyphicon-plus minimize" id="maximize-info" style="color:black;float:right;margin-top:-5px;display:none;">
+        </span>
+        
+        <table id="info-table">
 
-        <table style="">
+        	
             <tr>
                 <td colspan="2">
-                    <div id="cameraOptions" class="btn-group" data-toggle="buttons">
+                    <div id="cameraOptions" class="btn-group" data-toggle="buttons" >
                         <label class="btn btn-primary active">
                             <input type="radio" name="cameraOptions" id="cameraOption1" value="Perspective" autocomplete="off" checked>Perspective
                           </label>
@@ -530,15 +569,18 @@
             success:function(data){
             	
             	
-                if(data.result.errors == null){ 
+                if(data.errors == null){ 
                     $('#loading-container').hide();        
                 	createGraph3D(data, getRenderData());
                 	globalData = data;       
                 }else{
                     $('#loading-container').hide();
                     $('#error-container').show();
-                    $('#error-container').text( data.result.errors);
-					$('#error-container').fadeTo( 10000, 0 );
+                    $('#error-container').text( data.errors);
+					setTimeout(function(){ 
+                    	$('#error-container').hide();
+                    }, 7000);
+                    
                 }
 
   
@@ -735,6 +777,26 @@
         */
     });
 
+
+
+	$('span#minimize-info').click(function(e) {
+
+		$('#info-table').slideUp(100,function(){
+			
+			
+			$('#maximize-info').show()
+			$('#minimize-info').hide();
+		});
+		
+		
+	});
+
+	$('span#maximize-info').click(function(e) {
+		$('#minimize-info').show()
+		$(this).hide()
+		$('#info-table').slideDown()
+	});
+
     /*
      * URL to clipboard copying using ZeroClipboard.js
      */
@@ -821,7 +883,10 @@
                     $('#loading-container').hide();
                     $('#error-container').show();
                     $('#error-container').text( data.result.errors);
-					$('#error-container').fadeTo( 10000, 0 );
+					setTimeout(function(){ 
+                    	$('#error-container').hide();
+                    }, 7000);
+                    
                 }
 
             },
@@ -836,24 +901,53 @@
                     .parent().addClass($.support.fileInput ? undefined : 'disabled');
     });
 
-            $('#fileupload-nodes').change(function(e){
-                    $('#files-nodes').text( $('#fileupload-nodes')[0].files[0].name );
-            })
+    $('#fileupload-nodes').change(function(e){
+         $('#files-nodes').text( $('#fileupload-nodes')[0].files[0].name );
+    })
 
 
-            $("#instructions .layout-selection button.dropdown-toggle span").text("Choose layout algorithm");
+    $("#instructions .layout-selection button.dropdown-toggle span").text("Choose layout algorithm");
 
-            function displayLayout(name){
-                    $("#instructions .layout-selection button.dropdown-toggle").text(name);
+
+
+	$('#delete-data').click(function(e){
+		
+		$.get("/flush/",function(data){  
+	            if(data.errors == null){ 
+	            	$('#delete-indicator-ok').show();
+            		setTimeout(function(){ 
+                    	$('#delete-indicator-ok').hide();	
+                    }, 5000);
+                    
+	            
+	            }else{
+            		$('#delete-indicator-error').show();	
+            		$('#error-container').show();
+                    $('#error-container').text( data.errors);
+                    setTimeout(function(){ 
+                    	$('#error-container').hide();
+                    	$('#delete-indicator-error').hide();	
+                    }, 5000);
+                    
+					
+            	}
+            	
             }
+          )
+		
+ 	});
 
-            $(window).on("beforeunload", function() { 
-                    destroyFunction();
-            })
+    function displayLayout(name){
+        $("#instructions .layout-selection button.dropdown-toggle").text(name);
+    }
 
-            window.onbeforeunload = function(event) {
-                destroyFunction();
-            };
+    $(window).on("beforeunload", function() { 
+        destroyFunction();
+    })
+
+    window.onbeforeunload = function(event) {
+    	destroyFunction();
+    };
     </script>
 
 </body>

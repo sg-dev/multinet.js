@@ -34,8 +34,23 @@ table#instructions button{
 }
 
 table#instructions{
-
+	margin-bottom:10px;
 } 
+
+#delete-indicator-error{
+	color:darkred !important;
+	float:right;
+	margin-left:15px;
+	display:none;
+	
+}
+
+#delete-indicator-ok{
+	color:darkgreen !important;
+	float:right;
+	margin-left:15px;
+	display:none;
+}
 
 .infobox {
     border-radius: 8px;
@@ -147,6 +162,7 @@ table#instructions{
 }
 
 #fileupload-div {
+	margin-top:20px;
     position: absolute;
     z-index: 100000;
     max-width:350px;
@@ -406,6 +422,13 @@ div.ui-widget-header {
 }
 
 
+span.minimize:hover{
+	
+	color: #A8322D !important;
+	cursor:pointer;
+}
+
+
 /*freelancer overrides */
 
 header .container{
@@ -449,6 +472,41 @@ header .container{
 .feature-link-red{
 	
 	background: rgba(168, 50, 45, 0.9) none repeat scroll 0% 0%;
+}
+
+b.terms:hover {
+    color: #DA4F49;
+    cursor:pointer;
+    
+}
+
+b.terms{
+ 	text-decoration: underline;   
+ 	
+}
+
+
+span.terms{
+	
+	margin-left:5px;
+	
+}
+
+
+div#terms {
+    position:fixed;
+	top:30%;
+	left:40%;
+	
+    z-index: 100000;
+    max-width:350px;
+    height:auto;
+    background-color:white;
+    border: solid 1px #666;
+    -moz-border-radius: 5px;
+    border-radius: 10px;
+    padding:10px 10px 10px 10px;
+    display:none;
 }
 
 
@@ -511,6 +569,8 @@ header .container{
 	font-size:16px !important;
 	
 }
+
+
 
 
 /*bootstrap latest overrides*/

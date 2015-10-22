@@ -90,14 +90,22 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
 
     data_labels = []
     node_data = {}
+    custom_scale = {}
+    scale_index = -1
 
     try:
         if _nd_path:
             with open(_nd_path) as csvfile:
                 reader = csv.reader(csvfile, delimiter=';')
                 data_labels = reader.next()
+                if 'scale' in data_labels:
+                    scale_index = data_labels.index('scale')
 
                 for row in reader:
+                    if scale_index > 0:
+                        custom_scale[row[0]] = min(max(float(row[scale_index]), 0.0), 1.0)
+                    else:
+                        custom_scale[row[0]] = 1.0
                     node_data[row[0]] = row[1:]
 
         with open(_path) as f:
@@ -292,7 +300,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
                 except Exception,e:
                     indeg = 0
                     outdeg = 0
-                coords[node_id] = [ all_coords[ node_id ], _common, indeg, outdeg, indeg + outdeg ] 
+                coords[node_id] = [ all_coords[ node_id ], _common, indeg, outdeg, indeg + outdeg, custom_scale[node_id]] 
 
                 max_out_deg = max(max_out_deg, outdeg)
                 max_in_deg = max(max_in_deg, indeg)
@@ -304,7 +312,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
 
             # add dummy 0 values, so max_in_degree and max_out_degree have to 
             # same offset as the node's degrees
-            _layer_data['maxDeg'] = [0, 0, max_in_deg, max_out_deg, max_total_deg] 
+            _layer_data['maxDeg'] = [0, 0, max_in_deg, max_out_deg, max_total_deg, 1.0] 
 
             if directed_graph:
                 get_key = lambda v1, v2: ''.join([v1, v2])
@@ -332,6 +340,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
             data['node_data'] = node_data
         data['data_labels']= data_labels
         data['directed'] = directed_graph
+        data['custom_scale'] = scale_index > 0
 
         data = dict(data)
 

@@ -549,13 +549,23 @@ function createGraph3DStatic(data, renderData) {
 
 function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeSelector) {
     if (degreeSelector == undefined) {
-        var degreeSelector = function(v) {
-            return v[2];
-        };
+        if (data.custom_scale) {
+            var degreeSelector = function(v) {
+                return v[5];
+            };
+        } else {
+            var degreeSelector = function(v) {
+                return v[2];
+            };
+        }
     }
 
     if (destroyFunction != null) {
         destroyFunction();
+    }
+
+    if (destroyFunction == null && data.custom_scale) {
+        $('.scale-selection button').text('User Defined')
     }
 
     var graphData = new GraphData();
@@ -771,7 +781,11 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     }
 
 
-    var scales = ['In Degree', 'Out Degree', 'Total Degree'];
+    var scales = ['In Degree', 'Out Degree', 'Total Degree']; 
+    if (data.custom_scale) {
+        scales.push('User Defined');
+    }
+
     $.each( scales , function( i, val ) { 
         var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="scaleNodes(';
         el += "'" + val + "'";

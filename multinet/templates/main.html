@@ -19,16 +19,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     
     <script>
-	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-	
-	  ga('create', 'UA-67937718-1', 'auto');
-	  ga('send', 'pageview');
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-	</script>
-    
+      ga('create', 'UA-67937718-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+
 </head>
 
 <body>
@@ -39,15 +38,13 @@
 
     <div id="fileupload-div" class="div-center">
         <table id="instructions" width="190">
-        	
-	    	<tr>
-	            <td>
-	       	    	    <b>Multinet.js</b> 
-	            	
-	       	   </td>     
-            	<td>
-              	<span id="how-it-works" class="glyphicon glyphicon-question" style="float:right;"></span>
-               	</td>
+            <tr>
+                <td>
+                        <b>Multinet.js</b>
+               </td>
+                <td>
+                <span id="how-it-works" class="glyphicon glyphicon-question" style="float:right;"></span>
+                </td>
            </tr>
             <!--tr>
                 <td>
@@ -96,7 +93,7 @@
                         <span></span>
                       </button>
                       <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                      		<li role="presentation"><a role="menuitem" tabindex="1" href="#" onclick="displayLayout('Fruchterman-Reingold')">Fruchterman-Reingold (parallel)</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="1" href="#" onclick="displayLayout('Fruchterman-Reingold')">Fruchterman-Reingold (parallel)</a></li>
                             <li role="presentation"><a role="menuitem" tabindex="2" href="#" onclick="displayLayout('Kamada-Kawai')">Kamada-Kawai</a></li>
                             <!--li role="presentation"><a role="menuitem" tabindex="3" href="#" onclick="displayLayout('LGL')">LGL</a></li-->
                             <li role="presentation"><a role="menuitem" tabindex="4" href="#" onclick="displayLayout('Star')">Star</a></li>
@@ -134,61 +131,57 @@
 
 
         <div class="container" id="how" style="display:none;">
-           	 
-           	<i id="how" class="glyphicon glyphicon-x" style="float:right"></i>
- 	
-           	<div class="row">
+
+            <i id="how" class="glyphicon glyphicon-x" style="float:right"></i>
+
+            <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2>Getting Started</h2>
                     <!--hr class="star-light"-->
                 </div>
             </div>
-            
+
              <div class="row">
                 <div class="col-lg-12 text-center">
                     <p></p>
                 </div>
             </div>
-            
-            
+
             <div class="row">
-            
                 <div class="col-sm-8 col-sm-offset-2">
-					<p>
-						<span>
-							Upload an edgelist with four colums where the header is <strong>source</strong>;<strong>target</strong>;<strong>layer</strong>;<strong>timestamp</strong> 
-						</span>
-					</p>
-				
-				</div>
+                    <p>
+                        <span>
+                            Upload an edgelist with four colums where the header is <strong>source</strong>;<strong>target</strong>;<strong>layer</strong>;<strong>timestamp</strong>
+                        </span>
+                    </p>
+                </div>
                 <div class="col-sm-8 col-sm-offset-3 discussion-options">
 
-					<p>
-						<span>
-							<strong>layer</strong> stands for the identifier of the layer which the edge belongs to. 
-							The tool supports arbitrary number of layers.
-						</span>
-					</p>
-					<p>
-						<span>
-							<strong>timestamp</strong> can be a date string in <strong>YYYY-MM-DD</strong> format, or just years
-						</span>
-					</p>
-				</div>
-				<div class="col-sm-8 col-sm-offset-2">
-		
-					<p>
-						<span>
-							Once an edgelist is uploaded, the rendering can be started immediately. But there are more options:
-						</span>
-					</p>				
-				 </div>
-				 <div class="col-sm-8 col-sm-offset-3 discussion-options">		
-						<p><strong>Upload node attributes</strong> Uploading node ids used in the edgelist and an arbitrary number of attributes, separated by a <strong>;</strong> 
-							will allow you to navigate through the nodes from within a formatted table.</span></p>
-						<p><strong>Select layout</strong> The Fruchterman-Reingold is the default and it is the parallel version of the standard layout algorithm in the igraph package.</span></p>
-						<p><strong>Choose directedness</strong></p>
-				 </div>        
+                    <p>
+                        <span>
+                            <strong>layer</strong> stands for the identifier of the layer which the edge belongs to. 
+                            The tool supports arbitrary number of layers.
+                        </span>
+                    </p>
+                    <p>
+                        <span>
+                            <strong>timestamp</strong> can be a date string in <strong>YYYY-MM-DD</strong> format, or just years
+                        </span>
+                    </p>
+                </div>
+                <div class="col-sm-8 col-sm-offset-2">
+                    <p>
+                        <span>
+                            Once an edgelist is uploaded, the rendering can be started immediately. But there are more options:
+                        </span>
+                    </p>
+                 </div>
+                 <div class="col-sm-8 col-sm-offset-3 discussion-options">
+                        <p><strong>Upload node attributes</strong> Uploading node ids used in the edgelist and an arbitrary number of attributes, separated by a <strong>;</strong>
+                            will allow you to navigate through the nodes from within a formatted table.</span></p>
+                        <p><strong>Select layout</strong> The Fruchterman-Reingold is the default and it is the parallel version of the standard layout algorithm in the igraph package.</span></p>
+                        <p><strong>Choose directedness</strong></p>
+                 </div>
             </div>
         </div>
 
@@ -242,37 +235,6 @@
             </tr>
 
             <tr>
-
-                     	
-                <!--td colspan="2">
-                    <div id="degreeOptions" class="btn-group" data-toggle="buttons" >
-                      <label class="btn btn-primary active">
-                        <input type="radio" name="degreeOptions" id="degreeOption1" value="indegree" autocomplete="off" checked> In-
-                      </label>
-                      <label class="btn btn-primary">
-                        <input type="radio" name="degreeOptions" id="degreeOption2" value="outdegree" autocomplete="off"> Out-
-                      </label>
-                      <label class="btn btn-primary">
-                        <input type="radio" name="degreeOptions" id="degreeOption3" value="totaldegree" autocomplete="off"> Total-
-                      </label>
-                    </div>
-
-
-                </td-->
-            </tr>
-    
-            <!--tr>
-                <td>
-                    <label for="layout">Layout:</label>
-                </td>
-                <td class="right">
-                    <div id="layout-container">
-                            <textarea type="text" id="layout" readonly style=""></textarea>
-                    </div>
-                </td>
-            </tr-->
-            
-            <tr>
                 <td>
                     <b>Selected Layer:</b>
                 </td>
@@ -286,17 +248,16 @@
                     </div>
                 </td>
             </tr>
-            
-            
+
             <tr>
-                <td>    
+                <td>
                     <label for="nrnodes">#Nodes:</label>
                 </td>
                 <td class="right">
                     <input type="text" id="nrnodes" readonly >
                 </td>
-                
             </tr>
+
             <tr>
                 <td>
                     <label for="nredges">#Edges:</label>
@@ -305,6 +266,7 @@
                     <input type="text" id="nredges" readonly >
                 </td>
             </tr>
+
             <tr>
                 <td>
                     <label for="nrcolor">#Color:</label>
@@ -314,26 +276,9 @@
                 </td>
             </tr>
 
-
-            <!--tr>
-                <td>    
-                    <label for="selected_node">Selected Node:</label>
-                </td>
-                <td class="right">
-                    <div id="selected-node-container">
-                            <textarea type="text" id="selected_node" readonly ></textarea>
-                    </div>
-                </td>
-                
-            </tr-->
-            
-
-            
             <tr>
-                        	
-            	<td><b>Scale nodes:</b></td>
-            	                
-               	<td class="right selection">
+                <td><b>Scale nodes:</b></td>
+                <td class="right selection">
                     <div class="scale-selection dropdown">
                       <button class="btn btn-default dropdown-toggle-2" type="button" id="ScaleMenu" data-toggle="dropdown" aria-expanded="true">
                         In Degree
@@ -342,16 +287,14 @@
                       </ul>
                     </div>
                 </td>
-                
             </tr>
-            
-            
-            <tr style="display:none;"> 
+
+            <tr style="display:none;">
                 <td>
                     <b>Share Url:</b>
                 </td>
                 <td>
-                
+
                     <div id="url-container">
                         <textarea name="clipboard-text" id="clipboard-text" class="form-control" readonly>
                         </textarea>
@@ -384,9 +327,9 @@
             <tr>
                 <td colspan="2">
                     <button id="take-snapshot" type="submit" class="btn btn-danger delete" style="width:100%;margin:0 0 5px 0;" >
-                       	<span class="glyphicon glyphicon-camera" style="float:left;margin-top:3px;"></span>
+                        <span class="glyphicon glyphicon-camera" style="float:left;margin-top:3px;"></span>
 
-						<span>Snapshot</span>
+                        <span>Snapshot</span>
                     </button>
                 </td>
             </tr>
@@ -394,7 +337,7 @@
            <tr>
                 <td>
                     <button id="graph-replay" type="submit" class="btn btn-danger delete graph-replay-buttons" style="width:100%" >
-						 <span class="glyphicon glyphicon-play" style="float:left;margin-top:3px;"></span>
+                         <span class="glyphicon glyphicon-play" style="float:left;margin-top:3px;"></span>
                         <span>Replay</span>
                     </button>
 
@@ -404,14 +347,14 @@
                     </button>
                     
                     <button id="graph-replay-continue" type="submit" class="btn btn-danger delete graph-replay-buttons" style="width:100%;display:none;" >
-						 <span class="glyphicon glyphicon-play" style="float:left;margin-top:3px;"></span>
+                         <span class="glyphicon glyphicon-play" style="float:left;margin-top:3px;"></span>
                         <span>Continue</span>
                     </button>
 
                 </td>
 
                 
-               	<td class="right selection">
+                <td class="right selection">
                     <div class="layer-selection dropdown">
                       <button class="btn btn-default dropdown-toggle-1" type="button" id="ReplayModeMenu" data-toggle="dropdown" aria-expanded="true">
                         Window
@@ -430,7 +373,7 @@
                     <b>Replay Speed:</b>
                 </td>
 
-               	<td class="right selection">
+                <td class="right selection">
                     <div class="layer-selection dropdown">
                       <button class="btn btn-default dropdown-toggle-1" type="button" id="ReplaySpeedMenu" data-toggle="dropdown" aria-expanded="true">
                         1x
@@ -522,7 +465,7 @@
                 $('#loading-container').show();
             },
             success:function(data){
-                $('#loading-container').hide();        
+                $('#loading-container').hide();
                 createGraph3D(data, getRenderData());
                 globalData = data;
             }
@@ -537,7 +480,7 @@
 
         $('button#upload').hide();
 
-        $('#fileupload-div').switchClass("div-center", "div-left" );     
+        $('#fileupload-div').switchClass("div-center", "div-left" );
         $('#fileupload-div').slideUp(1000);
 
         $('#display-instructions').show();
@@ -596,41 +539,10 @@
      });
 
 
-	
-
-
-	/*
-    $('#degreeOptions').change(function(e) {
-        var selection = $("[name='degreeOptions']:checked").val();
-
-        if (selection === "indegree") {
-            fun = function() {
-                createGraph3D(globalData, getRenderData(), function(v) {
-                    return v[2];
-                });
-            };
-        } else if (selection =='outdegree') {
-            fun = function() {
-                createGraph3D(globalData, getRenderData(), function(v) {
-                    return v[3];
-                });
-            };
-        } else {
-             fun = function() {
-                createGraph3D(globalData, getRenderData(), function(v) {
-                    return v[4];
-                });
-            };           
-        }
-        redrawGraph(fun);
-    });
-    */
-    
     function scaleNodes(selection){
-    	
-    	 $("#ScaleMenu").text(selection);
+         $("#ScaleMenu").text(selection);
 
-    	if (selection === "In Degree") {
+        if (selection === "In Degree") {
             fun = function() {
                 createGraph3D(globalData, getRenderData(), function(v) {
                     return v[2];
@@ -642,18 +554,21 @@
                     return v[3];
                 });
             };
-        } else {
+        } else if (selection == "Total Degree"){
             fun = function() {
                 createGraph3D(globalData, getRenderData(), function(v) {
                     return v[4];
                 });
-            };           
+            };
+        } else {
+            fun = function() {
+                createGraph3D(globalData, getRenderData(), function(v) {
+                    return v[5];
+                });
+            };
         }
         redrawGraph(fun);
-    	
     }
-    
-    
 
     $('#cameraOption1').change(function(e){
         var renderData = getRenderData();
@@ -682,7 +597,7 @@
         if (destroyFunction != null) {
             destroyFunction();
         }
-		
+
         window.setTimeout(function() {
             createFn();
             $('#loading-container').hide();

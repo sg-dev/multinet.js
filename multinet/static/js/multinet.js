@@ -1050,17 +1050,18 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
                 contextMenu: false,
                 className: "htCenter htMiddle",
                 readOnly: true,
-                multiSelect: false,
+                multiSelect: true
             }); 
             Handsontable.hooks.add('afterSelection',function(r1, c1, r2, c2) {
-                var row = hot.getDataAtRow(r1);
-                // TODO focus on node
                 window.setTimeout(function() {
-                    for (var i=0; i < graphData.layer_nodes.length; i++) {
-                        if (row[0] in graphData.layer_nodes[i]) {
-                            clearHighlightedObjects(renderData, graphData);
-                            highlightNode(graphData, renderData, graphData.layer_nodes[i][row[0]].mesh);
-                            break;
+                    clearHighlightedObjects(renderData, graphData);
+                    for (var j=r1; j <= r2; j++) {
+                        var row = hot.getDataAtRow(j);
+                        for (var i=0; i < graphData.layer_nodes.length; i++) {
+                            if (row[0] in graphData.layer_nodes[i]) {
+                                highlightNode(graphData, renderData, graphData.layer_nodes[i][row[0]].mesh);
+                                break;
+                            }
                         }
                     }
                     renderData.render();

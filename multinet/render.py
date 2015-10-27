@@ -213,10 +213,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         nodes = len(graph.vs)
         edges = np.array( [edge.tuple for edge in graph.es], np.int32)
 
-        pos = math.sqrt(nodes) * np.random.random_sample( (nodes, dimension) ) - math.sqrt(nodes)/2
-        #float6Pos = np.copy( pos.astype(np.float32) )
-        pos = pos.astype(np.float32)
-        fl.layout_fr_omp_simd( edges, pos , max_it, temp )
+        fl.layout_fr(nodes*dimension, edges, max_it, temp )
 
         #get the Layout object here. 
         #http://igraph.org/python/doc/igraph.layout.Layout-class.html

@@ -615,6 +615,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
             graphData.layer_lines[i].geometry.dispose();
             graphData.layer_cones[i].geometry.dispose();
         }
+        graphData.edge_coordinates = null;
 
         $.each(graphData.node_meshes, function(i, layer_node_meshes) {
             $.each(layer_node_meshes, function(i, obj) {
@@ -632,6 +633,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
         graphData.vertices_mesh = null;
         for (var i=0; i < graphData.vertices_geom.length; i++) {
+            renderData.scene.remove(graphData.vertices_geom[i]);
             graphData.vertices_geom[i].dispose();
         }
         graphData.vertices_geom = [];

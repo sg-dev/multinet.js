@@ -226,13 +226,13 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         nodes = len(graph.vs)
         edges = np.array( [edge.tuple for edge in graph.es], np.int32)
 
-        fl.layout_fr(nodes*dimension, edges, max_it, temp )
+        pos = fl.layout_fr(nodes*dimension, edges, max_it, temp )
 
         #get the Layout object here. 
         #http://igraph.org/python/doc/igraph.layout.Layout-class.html
         scl =  int( _l/ 100 ) #int( _l * _l / 10 )
         if ly_alg == "Fruchterman-Reingold":
-            ly = igraph.Layout( tuple(map(tuple, pos )) )
+            ly = igraph.Layout(tuple(zip(pos[0:nodes], pos[nodes:2*nodes])))
             scl = scl / 3
         elif ly_alg == "LGL":
             ly = graph.layout_lgl()

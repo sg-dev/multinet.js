@@ -310,7 +310,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
                 except Exception,e:
                     indeg = 0
                     outdeg = 0
-                coords[node_id] = [ all_coords[ node_id ], _common, indeg, outdeg, indeg + outdeg, custom_scale[node_id]] 
+                coords[node_id] = [ all_coords[ node_id ], _common, indeg, outdeg, indeg + outdeg, custom_scale.get(node_id, 1)] 
 
                 max_out_deg = max(max_out_deg, outdeg)
                 max_in_deg = max(max_in_deg, indeg)

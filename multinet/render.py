@@ -1,3 +1,16 @@
+# Copyright (c) 2015, ETH Zurich, Chair of Systems Design
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 import csv
 import matplotlib.mlab
 import numpy as np
@@ -94,15 +107,25 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
 
     data_labels = []
     node_data = {}
+    custom_scale = {}
+    scale_index = -1
 
     try:
-        #if _nd_path:
-        with open(_nd_path) as csvfile:
-            reader = csv.reader(csvfile, delimiter=';')
-            data_labels = reader.next()
 
-            for row in reader:
-                node_data[row[0]] = row[1:]
+        if _nd_path:
+            with open(_nd_path) as csvfile:
+                reader = csv.reader(csvfile, delimiter=';')
+                data_labels = reader.next()
+                if 'scale' in data_labels:
+                    scale_index = data_labels.index('scale')
+
+                for row in reader:
+                    if scale_index > 0:
+                        custom_scale[row[0]] = min(max(float(row[scale_index]), 0.0), 1.0)
+                    else:
+                        custom_scale[row[0]] = 1.0
+                    node_data[row[0]] = row[1:]
+
 
     except Exception,e:
         pass
@@ -214,19 +237,13 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         nodes = len(graph.vs)
         edges = np.array( [edge.tuple for edge in graph.es], np.int32)
 
-        pos = math.sqrt(nodes) * np.random.random_sample( (nodes, dimension) ) - math.sqrt(nodes)/2
-        #float6Pos = np.copy( pos.astype(np.float32) )
-        pos = pos.astype(np.float32)
-        fl.layout_fr_omp_simd( edges, pos , max_it, temp )
+        pos = fl.layout_fr(nodes*dimension, edges, max_it, temp )
 
         #get the Layout object here. 
         #http://igraph.org/python/doc/igraph.layout.Layout-class.html
         scl =  int( _l/ 100 ) #int( _l * _l / 10 )
         if ly_alg == "Fruchterman-Reingold":
-            
-            ly = igraph.Layout( tuple(map(tuple, pos )) )
-            print "standard fr layout",ly
-            
+            ly = igraph.Layout(tuple(zip(pos[0:nodes], pos[nodes:2*nodes])))
             scl = scl / 3
         elif ly_alg == "LGL":
             ly = graph.layout_lgl()
@@ -304,7 +321,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
                 except Exception,e:
                     indeg = 0
                     outdeg = 0
-                coords[node_id] = [ all_coords[ node_id ], _common, indeg, outdeg, indeg + outdeg ] 
+                coords[node_id] = [ all_coords[ node_id ], _common, indeg, outdeg, indeg + outdeg, custom_scale.get(node_id, 1)] 
 
                 max_out_deg = max(max_out_deg, outdeg)
                 max_in_deg = max(max_in_deg, indeg)
@@ -316,7 +333,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
 
             # add dummy 0 values, so max_in_degree and max_out_degree have to 
             # same offset as the node's degrees
-            _layer_data['maxDeg'] = [0, 0, max_in_deg, max_out_deg, max_total_deg] 
+            _layer_data['maxDeg'] = [0, 0, max_in_deg, max_out_deg, max_total_deg, 1.0] 
 
             if directed_graph:
                 get_key = lambda v1, v2: ''.join([v1, v2])
@@ -344,6 +361,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
             data['node_data'] = node_data
         data['data_labels']= data_labels
         data['directed'] = directed_graph
+        data['custom_scale'] = scale_index > 0
 
         data = dict(data)
 

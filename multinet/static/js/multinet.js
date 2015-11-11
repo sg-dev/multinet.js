@@ -1,6 +1,17 @@
 /*
- * 
- */
+* Copyright (c) 2015, ETH Zurich, Chair of Systems Design
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+*
+* 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+*
+* 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+*
+* 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 var onMouseDown = null;
 var destroyFunction = null;
@@ -549,13 +560,23 @@ function createGraph3DStatic(data, renderData) {
 
 function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeSelector) {
     if (degreeSelector == undefined) {
-        var degreeSelector = function(v) {
-            return v[2];
-        };
+        if (data.custom_scale) {
+            var degreeSelector = function(v) {
+                return v[5];
+            };
+        } else {
+            var degreeSelector = function(v) {
+                return v[2];
+            };
+        }
     }
 
     if (destroyFunction != null) {
         destroyFunction();
+    }
+
+    if (destroyFunction == null && data.custom_scale) {
+        $('.scale-selection button').text('User Defined')
     }
 
     var graphData = new GraphData();
@@ -605,6 +626,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
             graphData.layer_lines[i].geometry.dispose();
             graphData.layer_cones[i].geometry.dispose();
         }
+        graphData.edge_coordinates = null;
 
         $.each(graphData.node_meshes, function(i, layer_node_meshes) {
             $.each(layer_node_meshes, function(i, obj) {
@@ -622,6 +644,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
         graphData.vertices_mesh = null;
         for (var i=0; i < graphData.vertices_geom.length; i++) {
+            renderData.scene.remove(graphData.vertices_geom[i]);
             graphData.vertices_geom[i].dispose();
         }
         graphData.vertices_geom = [];
@@ -769,9 +792,15 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
             .append('<li role="presentation">'+
                     '   <a role="menuitem" tabindex="-1" href="#" onclick="displayLayerInfo('+i+'); return 0;">'+data.layers[i].name+'</a></li>');
     }
-    
-    
-    var scales = ['In Degree', 'Out Degree', 'Total Degree'];
+
+
+
+    var scales = ['In Degree', 'Out Degree', 'Total Degree']; 
+    if (data.custom_scale) {
+        scales.push('User Defined');
+    }
+
+
     $.each( scales , function( i, val ) { 
     	var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="scaleNodes(';
     	el += "'" + val + "'";
@@ -1052,17 +1081,18 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
                 contextMenu: false,
                 className: "htCenter htMiddle",
                 readOnly: true,
-                multiSelect: false,
+                multiSelect: true
             }); 
             Handsontable.hooks.add('afterSelection',function(r1, c1, r2, c2) {
-                var row = hot.getDataAtRow(r1);
-                // TODO focus on node
                 window.setTimeout(function() {
-                    for (var i=0; i < graphData.layer_nodes.length; i++) {
-                        if (row[0] in graphData.layer_nodes[i]) {
-                            clearHighlightedObjects(renderData, graphData);
-                            highlightNode(graphData, renderData, graphData.layer_nodes[i][row[0]].mesh);
-                            break;
+                    clearHighlightedObjects(renderData, graphData);
+                    for (var j=r1; j <= r2; j++) {
+                        var row = hot.getDataAtRow(j);
+                        for (var i=0; i < graphData.layer_nodes.length; i++) {
+                            if (row[0] in graphData.layer_nodes[i]) {
+                                highlightNode(graphData, renderData, graphData.layer_nodes[i][row[0]].mesh);
+                                break;
+                            }
                         }
                     }
                     renderData.render();

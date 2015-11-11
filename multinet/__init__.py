@@ -28,7 +28,7 @@ VISUALIZATION_DIR = os.path.join(
 import multinet.views
 
 
-ADMINS = ['semre@ethz.ch']
+ADMINS = []
 
 
 try:
@@ -45,7 +45,7 @@ try:
         SECRET_KEY = secrets.SECRET_KEY
     )
 
-    if False: #not app.debug:
+    if not app.debug:
         import logging
         from logging.handlers import SMTPHandler
         
@@ -65,7 +65,7 @@ except:
         MAIL_USE_TLS = False,
         MAIL_USERNAME = None,
         MAIL_PASSWORD = None,
-        SECRET_KEY = 'testKey!'
+        SECRET_KEY = 'testKey'
     )
 
 
@@ -73,17 +73,10 @@ except:
 #celery support
 try:
     from celery import Celery
- 
-    #app.config['CELERY_BROKER_URL'] = "amqp://guest:guest@localhost:5672//"
-    #app.config['CELERY_RESULT_BACKEND'] = "amqp" # ://guest:guest@localhost:5672//"
-
-    celery = Celery(app.name, broker="amqp://guest:guest@localhost:5672//",unclude=["multinet.render"])
-    #celery.conf.update(app.config)
+    celery = Celery(app.name, broker="amqp://guest:guest@localhost:5672//",include=["multinet.render"])
     
     celery.config.update(
-        #USE_CELERY=True,
         CELERY_RESULT_BACKEND="amqp",
-        #CELERY_BROKER_URL="amqp://guest:guest@localhost:5672//"
     )
 except:
     

@@ -18,6 +18,7 @@ from multinet import VISUALIZATION_DIR
 
 import celery
 
+from flask import jsonify, render_template
     
 
 SUPPORTED_LAYOUTS = ['Fruchterman-Reingold','Kamada-Kawai', 'LGL', 'Random', 'Star']
@@ -113,6 +114,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
                 edges_type = edges_type[:3]
         edges = np.loadtxt( open(_path, 'rb'), delimiter=';',  skiprows = 1, dtype = edges_type )
         if len(edges_type) == 3:
+            #fill the timestamp column with null timestamps if it is not in data
             timestamps = len(edges["layer"]) * ['00-00-0000']
         else:
             timestamps = edges["timestamp"]
@@ -187,7 +189,7 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
             data[layer] = _layer_data
 
     except Exception,e:
-        print "graph init failed", _path, e
+        print "graph init failed 1", _path, e
         return { "graph_ready": False,  "errors": e } #"Improper file format. Please make sure your csv file complies with the tool's format" }
 
     try:
@@ -221,7 +223,10 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
         #http://igraph.org/python/doc/igraph.layout.Layout-class.html
         scl =  int( _l/ 100 ) #int( _l * _l / 10 )
         if ly_alg == "Fruchterman-Reingold":
+            
             ly = igraph.Layout( tuple(map(tuple, pos )) )
+            print "standard fr layout",ly
+            
             scl = scl / 3
         elif ly_alg == "LGL":
             ly = graph.layout_lgl()
@@ -235,12 +240,12 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
             ly = graph.layout_random()
             scl =  scl * 2
         else:
-            ly = igraph.Layout( tuple(map(tuple, pos )) )
-            scl = scl / 3
+            #ly = igraph.Layout( tuple(map(tuple, pos )) )
+            #scl = scl / 3
+            ly = graph.layout_fruchterman_reingold(dim=2,coolexp =1, area = int( _l * _l / 10 ) )
             #ly_alg = "Fruchterman-Reingold"
             #OR standard fruchterman reingold
-            #ly = graph.layout_fruchterman_reingold(dim=2,coolexp =1, area = int( _l * _l / 10 ) )
-
+            
         ly_end = datetime.now()
         diff = ly_end - ly_start
 

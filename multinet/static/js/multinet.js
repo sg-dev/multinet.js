@@ -784,7 +784,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     $.each( replayModes , function( i, val ) { 
     	
     	if(val == "window"){
-    		var modeName = "Window"
+    		var modeName = "Sliding Window"
     	}else{
     		var modeName = "Fixed Start"
     	}
@@ -808,44 +808,10 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     	el += speedName + '</a></li>';
     	$("ul.dropdown-menu-replayspeed").append(el);
     });
+    
 
 
-    var scales = ['In Degree', 'Out Degree', 'Total Degree'];
-    $.each( scales , function( i, val ) { 
-        var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="scaleNodes(';
-        el += "'" + val + "'";
-        el += '); return 0;">';
-        el += val + '</a></li>';
-        $("ul.dropdown-menu-scale").append(el);
-    });
     
-    var replayModes = ['single','window']
-    $.each( replayModes , function( i, val ) { 
-        
-        if(val == "window") {
-            var modeName = "Window"
-        } else {
-            var modeName = "Fixed Start"
-        }
-        var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="setReplayMode(';
-        el += "'" + val + "'";
-        el += '); return 0;">';
-        el += modeName + '</a></li>';
-        $("ul.dropdown-menu-replaymode").append(el);
-    });
-    
-    
-    var replaySpeeds = [1,2,4]
-    $.each( replaySpeeds , function( i, val ) { 
-        
-        var speedName = val + "x";
-        
-        var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="setReplaySpeed(';
-        el += val;
-        el += '); return 0;">';
-        el += speedName + '</a></li>';
-        $("ul.dropdown-menu-replayspeed").append(el);
-    });
 
     var oldLayer = 0;
     var layerCameraPos = {0: 0};
@@ -939,7 +905,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     setReplayMode = function(mode){
         $("#replay-mode").val(mode);
         if(mode=="window"){
-            $("#ReplayModeMenu").text("Window");
+            $("#ReplayModeMenu").text("Sliding Window");
         }else{
             $("#ReplayModeMenu").text("Fixed Start");
         }

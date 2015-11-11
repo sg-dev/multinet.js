@@ -429,6 +429,20 @@ span.minimize:hover{
 }
 
 
+.dropdown-toggle-1{
+	width: 110px !important;
+}
+
+.dropdown-toggle-2{
+	width: 110px !important;
+}
+.dropdown-toggle{
+	width: 110px !important;
+}
+
+div.layout-selection .dropdown-toggle{
+	width: 100% !important;
+}
 /*freelancer overrides */
 
 header .container{

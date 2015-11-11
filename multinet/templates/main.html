@@ -272,19 +272,19 @@
                 </td>
             </tr>
 
-            <tr>
+            <!--tr>
                 <td colspan="2">
                     <div id="layoutOptions" class="btn-group" data-toggle="buttons">
                       <label class="btn btn-primary active">
                         <input type="radio" name="layoutOptions" id="layoutOption1" value="3D" autocomplete="off" checked> 3D
                       </label>
                       <label class="btn btn-primary">
-                        <input type="radio" name="layoutOptions" id="layoutOption2" value="2D" autocomplete="off"> 2D
+                      	<input type="radio" name="layoutOptions" id="layoutOption2" value="2D" autocomplete="off" checked> 2D
                       </label>
                     </div>
 
                 </td>
-            </tr>
+            </tr-->
 
             <tr>
 
@@ -380,7 +380,7 @@
             	                
                	<td class="right selection">
                     <div class="scale-selection dropdown">
-                      <button class="btn btn-default dropdown-toggle-2" type="button" id="ScaleMenu" data-toggle="dropdown" aria-expanded="true">
+                      <button class="btn btn-default dropdown-toggle" type="button" id="ScaleMenu" data-toggle="dropdown" aria-expanded="true">
                         In Degree
                       </button>
                       <ul class="dropdown-menu-scale dropdown-menu" role="menu" aria-labelledby="ScaleMenu">
@@ -457,9 +457,9 @@
 
                 
                	<td class="right selection">
-                    <div class="layer-selection dropdown">
-                      <button class="btn btn-default dropdown-toggle-1" type="button" id="ReplayModeMenu" data-toggle="dropdown" aria-expanded="true">
-                        Window
+                    <div class="replaymode-selection dropdown">
+                      <button class="btn btn-default dropdown-toggle" type="button" id="ReplayModeMenu" data-toggle="dropdown" aria-expanded="true" style="padding: 4px 4px !important;">
+                        Sliding Window
                         <!--span class="caret"></span-->
                       </button>
                       <ul class="dropdown-menu-replaymode dropdown-menu" role="menu" aria-labelledby="ReplayModeMenu">
@@ -476,8 +476,8 @@
                 </td>
 
                	<td class="right selection">
-                    <div class="layer-selection dropdown">
-                      <button class="btn btn-default dropdown-toggle-1" type="button" id="ReplaySpeedMenu" data-toggle="dropdown" aria-expanded="true">
+                    <div class="replayspeed-selection dropdown">
+                      <button class="btn btn-default dropdown-toggle" type="button" id="ReplaySpeedMenu" data-toggle="dropdown" aria-expanded="true">
                         1x
                         <!--span class="caret"></span-->
                       </button>
@@ -558,6 +558,7 @@
     {% if fetch_url is defined %}
         $('div#fileupload-div').hide(); 
         
+       
         $.ajax({
             url: "{{ fetch_url }}",
             beforeSend:function(){
@@ -568,7 +569,7 @@
             },
             success:function(data){
             	
-            	
+            	console.log(data)
                 if(data.errors == null){ 
                     $('#loading-container').hide();        
                 	createGraph3D(data, getRenderData());
@@ -584,7 +585,16 @@
                 }
 
   
-            }
+            },
+             error : function(jqXHR,textStatus,errorThrown){	            
+	            $('#loading-container').hide();
+                $('#error-container').show();
+                $('#error-container').text(  "Graph does not exist." );
+	         	setTimeout(function(){ 
+                	$('#error-container').hide();
+                }, 7000);
+                    
+	        }
         });
     {% else %}
          $('div#fileupload-div').show();

@@ -725,6 +725,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     });
 
     function updateLayerDistance(dist) {
+        var highlighted_node = graphData.highlighted_node;
         clearHighlightedObjects(renderData, graphData);
 
         var base_pos = 0;
@@ -769,6 +770,9 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
         for (var i=0; i < graphData.edge_coordinates.length; i++) {  
             updatePosition(graphData.layer_lines[i].geometry, base_pos + (i * dist));
             updatePosition(graphData.layer_cones[i].geometry, base_pos + (i * dist));
+        }
+        if (highlighted_node != null) {
+            highlightNode(graphData, renderData, highlighted_node);
         }
         renderData.render();
     }
@@ -904,7 +908,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
 
     //replay tools
-    function foo(start, end, round ) {
+    function foo(start, end, round) {
         var highlighted_node = graphData.highlighted_node;
         clearHighlightedObjects(renderData, graphData);
         $("#slider").slider("option", "values", [start, end]);

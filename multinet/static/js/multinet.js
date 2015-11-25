@@ -794,7 +794,6 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     }
 
 
-
     var scales = ['In Degree', 'Out Degree', 'Total Degree']; 
     if (data.custom_scale) {
         scales.push('User Defined');
@@ -802,45 +801,38 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
 
     $.each( scales , function( i, val ) { 
-    	var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="scaleNodes(';
-    	el += "'" + val + "'";
-    	el += '); return 0;">';
-    	el += val + '</a></li>';
-    	$("ul.dropdown-menu-scale").append(el);
+        var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="scaleNodes(';
+        el += "'" + val + "'";
+        el += '); return 0;">';
+        el += val + '</a></li>';
+        $("ul.dropdown-menu-scale").append(el);
     });
-    
+
     var replayModes = ['single','window']
     $.each( replayModes , function( i, val ) { 
-    	
-    	if(val == "window"){
-    		var modeName = "Sliding Window"
-    	}else{
-    		var modeName = "Fixed Start"
-    	}
-    	
-    	var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="setReplayMode(';
-    	el += "'" + val + "'";
-    	el += '); return 0;">';
-    	el += modeName + '</a></li>';
-    	$("ul.dropdown-menu-replaymode").append(el);
-    });
-    
-    
-	var replaySpeeds = [1,2,4]
-    $.each( replaySpeeds , function( i, val ) { 
-    	
-    	var speedName = val + "x";
-    	
-    	var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="setReplaySpeed(';
-    	el += val;
-    	el += '); return 0;">';
-    	el += speedName + '</a></li>';
-    	$("ul.dropdown-menu-replayspeed").append(el);
-    });
-    
+        if(val == "window"){
+            var modeName = "Sliding Window"
+        }else{
+            var modeName = "Fixed Start"
+        }
 
+        var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="setReplayMode(';
+        el += "'" + val + "'";
+        el += '); return 0;">';
+        el += modeName + '</a></li>';
+        $("ul.dropdown-menu-replaymode").append(el);
+    });
 
-    
+    var replaySpeeds = [1,2,4]
+    $.each( replaySpeeds , function( i, val ) {
+        var speedName = val + "x";
+
+        var el = '<li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="setReplaySpeed(';
+        el += val;
+        el += '); return 0;">';
+        el += speedName + '</a></li>';
+        $("ul.dropdown-menu-replayspeed").append(el);
+    });
 
     var oldLayer = 0;
     var layerCameraPos = {0: 0};
@@ -913,9 +905,14 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
     //replay tools
     function foo(start, end, round ) {
+        var highlighted_node = graphData.highlighted_node;
+        clearHighlightedObjects(renderData, graphData);
         $("#slider").slider("option", "values", [start, end]);
         updateSlider(start, end);
         displayEdges(start, end, graphData, renderData.scene);
+        if (highlighted_node != null) {
+            highlightNode(graphData, renderData, highlighted_node);
+        }
         renderData.render();
     }
 
@@ -1131,6 +1128,7 @@ function clearHighlightedObjects(renderData, graphData) {
     }
     graphData.highlight_meshes = [];
     graphData.neighborhood_lines = [];
+    graphData.highlighted_node = null;
 }
 
 function highlightNeighbors(neighborhood_geometry, highlight_geom, graphData, node, node_id, layer_id) {
@@ -1189,7 +1187,7 @@ function highlightNode(graphData, renderData, node) {
 
     var highlight_geom = new THREE.Geometry();
     var neighborhood_geometry = new THREE.Geometry();
-
+    graphData.highlighted_node = node;
 
     var row = 0;
     for (; row < graphData.node_data_list.length; row++) {
@@ -1198,7 +1196,6 @@ function highlightNode(graphData, renderData, node) {
         }
     }
 
-    console.log("highlight node");
     if (renderData.hot != null) {
         renderData.hot.disable_event = true;
         // this is needed because handsontable does not scroll to selection for

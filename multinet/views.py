@@ -20,12 +20,7 @@ from werkzeug import secure_filename
 
 from multinet import app, VISUALIZATION_DIR
 import multinet.render
-import celery
 from multinet.render import graph_layout
-
-from flask.ext.mail import Message, Mail
-
-
 
 
 ALLOWED_EXTENSIONS = set(['csv',])
@@ -36,29 +31,11 @@ import sys, traceback
 import random
 import string
 from datetime import datetime, timedelta
-from werkzeug.routing import BaseConverter
 
-
-class RegexConverter(BaseConverter):
-    def __init__(self, url_map, *items):
-        super(RegexConverter, self).__init__(url_map)
-        self.regex = items[0]
-        
-# Use the RegexConverter function as a converter method for mapped urls
-app.url_map.converters['regex'] = RegexConverter
-
-@app.route("/<regex('[a-zA-Z0-9]{6,6}'):token>/")
-def client(token):
-    print "token from url", token
-    #TODO: first check to see if this is a valid url
-    if check_token(token): 
-        return render_template('main.html')
-    else:
-        return render_template('start.html', errors="Invalid token (%s). Please register to get a valid token" % ( token ) )
 
 @app.route('/')
 def main():
-    return render_template('start.html')
+    return render_template('main.html')
 
 
 @app.route('/share/<dataset>/')

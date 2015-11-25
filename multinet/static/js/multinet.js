@@ -1086,6 +1086,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
             }); 
             Handsontable.hooks.add('afterSelection',function(r1, c1, r2, c2) {
                 if (renderData.hot.disable_event) { return ; }
+                $("#clear-selection-tr").show();
                 window.setTimeout(function() {
                     clearHighlightedObjects(renderData, graphData);
                     for (var j=r1; j <= r2; j++) {

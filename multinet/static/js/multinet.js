@@ -1046,9 +1046,10 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
     });
 
 
-        var hot = null;
+        renderData.hot = null;
         $("#hide-table").click(function() {
-            hot.destroy();
+            renderData.hot.destroy();
+            renderData.hot = null;
             $("#data-table").hide();
             //$("#container canvas").css("width", $(window).width());
             renderData.updateAspect();
@@ -1070,7 +1071,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
                 td.style.color = (value < 0) ? 'red' : 'green';
             };
 
-            hot = new Handsontable(container, {
+            renderData.hot = new Handsontable(container, {
                 data: graphData.node_data_list,
                 manualColumnResize: true,
                 width: 400,
@@ -1084,10 +1085,11 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
                 multiSelect: true
             }); 
             Handsontable.hooks.add('afterSelection',function(r1, c1, r2, c2) {
+                if (renderData.hot.disable_event) { return ; }
                 window.setTimeout(function() {
                     clearHighlightedObjects(renderData, graphData);
                     for (var j=r1; j <= r2; j++) {
-                        var row = hot.getDataAtRow(j);
+                        var row = renderData.hot.getDataAtRow(j);
                         for (var i=0; i < graphData.layer_nodes.length; i++) {
                             if (row[0] in graphData.layer_nodes[i]) {
                                 highlightNode(graphData, renderData, graphData.layer_nodes[i][row[0]].mesh);
@@ -1097,7 +1099,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
                     }
                     renderData.render();
                 }, 100);
-            }, hot);
+            }, renderData.hot);
 
         });
 
@@ -1187,6 +1189,23 @@ function highlightNode(graphData, renderData, node) {
     var highlight_geom = new THREE.Geometry();
     var neighborhood_geometry = new THREE.Geometry();
 
+
+    var row = 0;
+    for (; row < graphData.node_data_list.length; row++) {
+        if (graphData.node_data_list[row][0] == node.node_id) {
+            break;
+        }
+    }
+
+    console.log("highlight node");
+    if (renderData.hot != null) {
+        renderData.hot.disable_event = true;
+        // this is needed because handsontable does not scroll to selection for
+        // the second selectCell call
+        renderData.hot.selectCell(row, 0, row, 0, true);
+        renderData.hot.selectCell(row, 0, row, renderData.hot.countCols()-1, true);
+        renderData.hot.disable_event = false;
+    }
     // highlight the selected node in the other layers, including an edge between the layers
     for (var i=0; i < graphData.layer_nodes.length; i++) {
         if (node.node_id in graphData.layer_nodes[i]) {

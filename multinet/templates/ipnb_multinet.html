@@ -1,7 +1,16 @@
 <h1>The Graph</h1>
 
+<div id="container"></div>
+<div id="slider-container" style="display: none;">
+    <input type="text" id="year" readonly>
+    <div id="slider" style="float:right;"></div>
+</div>
+
 
 <script>
 var data = {{data}}
+var globalData = data;
+
 console.log(data)
+createGraph3D(data, getRenderData());
 </script>

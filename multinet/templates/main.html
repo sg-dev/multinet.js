@@ -527,9 +527,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         $.ajax({
             url: "{{ fetch_url }}",
             beforeSend:function(){
-                if (destroyFunction != null) {
-                    destroyFunction();
-                }
+                doDestroyGraph();
                 $('#loading-container').show();
             },
             success:function(data){
@@ -612,27 +610,29 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     }); 
 
     $('#layoutOptions').change(function(e) {
-       var selection = $("[name='layoutOptions']:checked").val();
+        var selection = $("[name='layoutOptions']:checked").val();
+        var renderData = getRenderData();
 
+        doDestroyGraph();
+ 
         if (selection == "3D") {
             $('#cameraOptions label').removeClass('disabled');
             $("#distanceSlider").slider('enable');
             fun = function() {
-                var renderData = getRenderData();
                 renderData.camera.position.z = 0;
                 renderData.camera.position.y = 1500;
-
-                createGraph3D(globalData, getRenderData());
+                var res = createGraph3D(globalData, renderData);
+                _destroyFunction = res.destroyFunction;
             };
         } else {
             $('#cameraOptions label').addClass('disabled');
             $("#distanceSlider").slider('disable');
             fun = function() {
-                var renderData = getRenderData();
                 renderData.camera.position.z = 1500;
                 renderData.camera.position.y = 0;
 
-                createGraph2D(globalData, renderData);
+                var res = createGraph2D(globalData, renderData);
+                _destroyFunction = res.destroyFunction;
             };
         }
         redrawGraph(fun);
@@ -640,31 +640,37 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
     function scaleNodes(selection){
-         $("#ScaleMenu").text(selection);
+        $("#ScaleMenu").text(selection);
+        var renderData = getRenderData();
+
+        doDestroyGraph();
 
         if (selection === "In Degree") {
             fun = function() {
-                createGraph3D(globalData, getRenderData(), function(v) {
+                var res = createGraph3D(globalData, renderData, function(v) {
                     return v[2];
                 });
+                _destroyFunction = res.destroyFunction;
             };
         } else if (selection == "Out Degree") {
             fun = function() {
-                createGraph3D(globalData, getRenderData(), function(v) {
+                createGraph3D(globalData, renderData, function(v) {
                     return v[3];
                 });
             };
         } else if (selection == "Total Degree"){
             fun = function() {
-                createGraph3D(globalData, getRenderData(), function(v) {
+                var res = createGraph3D(globalData, renderData, function(v) {
                     return v[4];
                 });
+                _destroyFunction = res.destroyFunction;
             };
         } else {
             fun = function() {
-                createGraph3D(globalData, getRenderData(), function(v) {
+                var res = createGraph3D(globalData, getRenderData(), function(v) {
                     return v[5];
                 });
+                _destroyFunction = res.destroyFunction;
             };
         }
         redrawGraph(fun);
@@ -687,16 +693,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     });
 
     function redrawGraph(createFn) {
-        
         $('#info-container').addClass('disable-element');
-        
+
         //$('#fileupload-div').switchClass("div-center", "div-left" );
         $('#loading-container').show();
         $('#container').hide();
 
-        if (destroyFunction != null) {
-            destroyFunction();
-        }
+        doDestroyGraph();
 
         window.setTimeout(function() {
             createFn();
@@ -820,9 +823,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
                     $('button#upload').hide();
 
                     data.submit();
-                    if (destroyFunction != null) {
-                        destroyFunction();
-                    }
+                    doDestroyGraph();
                     $('#loading-container').show();
                 });
                 
@@ -831,8 +832,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
                 if(data.result.errors == null){ 
                     styleGraphLoaded();
-                    createGraph3D(data.result, getRenderData());
-                    globalData = data.result;           
+                    var res = createGraph3D(data.result, getRenderData());
+                    _destroyFunction = res.destroyFunction;
+                    globalData = data.result;
                 }else{
                     $('#loading-container').hide();
                     $('#error-container').show();
@@ -896,11 +898,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     }
 
     $(window).on("beforeunload", function() { 
-        destroyFunction();
+        doDestroyGraph();
     })
 
     window.onbeforeunload = function(event) {
-    	destroyFunction();
+        doDestroyGraph();
     };
     </script>
 

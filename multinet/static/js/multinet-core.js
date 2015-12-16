@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015, ETH Zurich, Chair of Systems Design
+* Copyright (c) 2015, ETH Zurich, Chair of Systems Des_ign
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -13,26 +13,11 @@
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-var onMouseDown = null;
-var destroyFunction = null;
-var displayLayerInfo = null;
 
-var _renderData = null;
-var _graphData = null;
-
-var playLoop;
 
 var maxLayerDist = 1000;
 var minLayerDist = 150;
-var centerY = -1000;
 
-
-function getRenderData() {
-    if (_renderData == null) {
-        _renderData = new RenderData();
-    }
-    return _renderData;
-}
 
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
@@ -45,7 +30,6 @@ function RenderData() {
 
     //renderer.setClearColor( scene.fog.color );
     this.renderer.setPixelRatio( window.devicePixelRatio );
-    console.log($('#container').width(), $('#container').height());
     this.renderer.setSize( $('#container').width(), $('#container').height());
     this.renderer.setClearColor( 0xffffff );
     this.renderer.sortObjects = false;
@@ -559,6 +543,52 @@ function createGraph3DStatic(data, renderData) {
     }, false);
 }
 
+function destroyGraph(renderData, graphData) {
+    window.removeEventListener('mousedown', renderData.onMouseDown);
+
+    clearHighlightedObjects(renderData, graphData);
+
+    if (graphData.layer_lines.length == 0) {
+
+        return;
+    }
+
+    for (var i=0; i < graphData.layer_lines.length; i++) {
+        renderData.scene.remove(graphData.layer_lines[i]);
+        renderData.scene.remove(graphData.layer_cones[i]);
+        graphData.layer_lines[i].geometry.dispose();
+        graphData.layer_cones[i].geometry.dispose();
+    }
+    graphData.edge_coordinates = null;
+
+    $.each(graphData.node_meshes, function(i, layer_node_meshes) {
+        $.each(layer_node_meshes, function(i, obj) {
+            obj.geometry.dispose();
+        });
+    });
+
+    graphData.layer_lines = [];
+
+    graphData.edge_coordinates= {};
+
+    $.each(graphData.vertices_mesh, function(i, obj) {
+        renderData.scene.remove(obj);
+    });
+
+    graphData.vertices_mesh = null;
+    for (var i=0; i < graphData.vertices_geom.length; i++) {
+        renderData.scene.remove(graphData.vertices_geom[i]);
+        graphData.vertices_geom[i].dispose();
+    }
+    graphData.vertices_geom = [];
+
+    renderData.layer_info = {};
+
+    clearHighlightedObjects(renderData, graphData);
+
+    renderData.render();
+}
+
 function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeSelector) {
     if (degreeSelector == undefined) {
         if (data.custom_scale) {
@@ -572,18 +602,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
         }
     }
 
-    if (destroyFunction != null) {
-        destroyFunction();
-    }
-
-    if (destroyFunction == null && data.custom_scale) {
-        $('.scale-selection button').text('User Defined')
-    }
-
     var graphData = new GraphData();
-
-    // store globally
-    _graphData = graphData;
 
     graphData.directed = data.directed;
 
@@ -604,7 +623,7 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
     graphData.neighborhood = [];
 
-    onMouseDown = window.addEventListener( 'mousedown', makeOnMouseDownHandler(renderData, graphData), false );
+    renderData.onMouseDown = window.addEventListener( 'mousedown', makeOnMouseDownHandler(renderData, graphData), false );
 
     var area = data.max_node_ct;
     var num_edges = data.edgect1 + data.edgect2;
@@ -634,7 +653,10 @@ function createGraph(data, renderData, coordinateTransformer, doAnimate, degreeS
 
     renderData.render();
 
-    return graphData
+    return {
+        graphData: graphData,
+        destroyFunction: function() { destroyGraph(renderData, graphData) }
+    };
 }
 
 /*

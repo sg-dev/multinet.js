@@ -25,9 +25,10 @@ def init_3d():
     <script type="text/javascript" src="multinet/static/js/threejs/stats-r12.min.js"></script>
     <script type="text/javascript" src="multinet/static/js/threejs/detector.js"></script>
 
-    <script type="text/javascript" src="multinet/static/js/multinet.js"></script>
+    <script type="text/javascript" src="multinet/static/js/multinet-core.js"></script>
     <script type="text/javascript">
         var multinet_javascript_injected = true;
+    </script>
     """)
 
     library_javascript.write(

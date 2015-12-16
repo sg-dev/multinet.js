@@ -487,7 +487,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     <script src="{{ url_for('static', filename='js/threejs/stats-r12.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/threejs/detector.js') }}"></script>
 
-    <script src="{{ url_for('static', filename='js/multinet.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/multinet-core.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/multinet-web.js') }}"></script>
 
     <script>
 
@@ -537,7 +538,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
             	console.log(data)
                 if(data.errors == null){ 
                     $('#loading-container').hide();        
-                	createGraph3D(data, getRenderData());
+                	displayGraph(data, getRenderData());
                 	globalData = data;       
                 }else{
                     $('#loading-container').hide();

@@ -45,7 +45,8 @@ function RenderData() {
 
     //renderer.setClearColor( scene.fog.color );
     this.renderer.setPixelRatio( window.devicePixelRatio );
-    this.renderer.setSize( window.innerWidth, window.innerHeight );
+    console.log($('#container').width(), $('#container').height());
+    this.renderer.setSize( $('#container').width(), $('#container').height());
     this.renderer.setClearColor( 0xffffff );
     this.renderer.sortObjects = false;
 
@@ -74,7 +75,7 @@ function RenderData() {
     //perspective camera
     this.usePerspectiveCamera = function(currentPosition) {
         that.camera = new THREE.PerspectiveCamera(
-                40, window.innerWidth / window.innerHeight, 1, 100000
+                40, $('#container').width() / $('#container').height(), 1, 100000
         );
 
         updateCameraPosition(currentPosition, that);
@@ -82,10 +83,10 @@ function RenderData() {
 
     this.useOrthographicCamera = function(currentPosition) {
         that.camera = new THREE.OrthographicCamera(
-                2 * window.innerWidth / - 1,
-                2 * window.innerWidth / 1,
-                2 * window.innerHeight / 1,
-                2 * window.innerHeight / - 1,
+                2 * $('#container').width() / - 1,
+                2 *  $('#container').width() / 1,
+                2 *  $('#container').height() / 1,
+                2 *  $('#container').height() / - 1,
                 -5000, 100000
         );
 
@@ -96,9 +97,9 @@ function RenderData() {
 
     this.updateAspect = function() {
         var canvas = $("#container canvas");
-        that.camera.aspect = window.innerWidth / window.innerHeight;
+        that.camera.aspect = $('#container').width() / $('#container').height();
         that.camera.updateProjectionMatrix();
-        that.renderer.setSize(window.innerWidth, window.innerHeight);
+        that.renderer.setSize( $('#container').width(), $('#container').height());
         that.render();
     };
 
@@ -134,11 +135,11 @@ function RenderDataSVG(currentPosition) {
     this.renderer = new THREE.SVGRenderer( { antialias: true } );
     //renderer.setClearColor( scene.fog.color );
     this.renderer.setPixelRatio( window.devicePixelRatio );
-    this.renderer.setSize( window.innerWidth, window.innerHeight );
+    this.renderer.setSize( $('#container').width(), $('#container').height());
     this.renderer.setClearColor( 0xffffff );
     this.renderer.sortObjects = false;
 
-    this.camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 100000 );
+    this.camera = new THREE.PerspectiveCamera( 40, $('#container').width() / $('#container').height(), 1, 100000 );
 
     if(currentPosition){
         this.camera.position.x = currentPosition.x; 
@@ -153,10 +154,10 @@ function RenderDataSVG(currentPosition) {
     this.container.appendChild( this.renderer.domElement );
 
     window.addEventListener('resize', function onWindowResize() {
-        that.camera.aspect = window.innerWidth / window.innerHeight;
+        that.camera.aspect = $('#container').width() / $('container').height;
         that.camera.updateProjectionMatrix();
 
-        that.renderer.setSize( window.innerWidth, window.innerHeight );
+        that.renderer.setSize( $('#container').width(), $('#container').height());
 
         that.render();
     }, false);
@@ -486,7 +487,7 @@ function createGraph2D(data, renderData) {
     // inspired by http://stackoverflow.com/questions/13350875/three-js-width-of-view/13351534#13351534
     var vFOV = renderData.camera.fov * Math.PI / 180; 
     var ratio = 2 * Math.tan( vFOV / 2 );
-    var aspect = window.innerWidth / window.innerHeight; 
+    var aspect = $('#container').width() / $('#container').height();
     var d1 = data.width / ratio;
     var d2 = data.width / (ratio * aspect)
     var dist = Math.max(d1, d2);
@@ -523,7 +524,7 @@ function createGraph3D(data, renderData, degreeSelector) {
     // inspired by http://stackoverflow.com/questions/13350875/three-js-width-of-view/13351534#13351534
     var vFOV = renderData.camera.fov * Math.PI / 180; 
     var ratio = 2 * Math.tan( vFOV / 2 );
-    var aspect = window.innerWidth / window.innerHeight; 
+    var aspect = $('#container').width() / $('#container').height();
     var d1 = y_range / ratio;
     var d2 = data.width / (ratio * aspect)
     var dist = Math.max(d1, d2);
@@ -763,8 +764,8 @@ function makeOnMouseDownHandler(renderData, graphData) {
         var update_scene = false;
 
         var mouse = new THREE.Vector2();
-        mouse.x = ( event.clientX / renderData.renderer.domElement.width ) * 2 - 1;
-        mouse.y = - ( ($(window).scrollTop()+event.clientY) / renderData.renderer.domElement.height) * 2 + 1;
+        mouse.x = ( (event.clientX-$('#container').offset().left) / renderData.renderer.domElement.width ) * 2 - 1;
+        mouse.y = - ( ($(window).scrollTop()+event.clientY - $('#container').offset().top) / renderData.renderer.domElement.height) * 2 + 1;
 
         var raycaster = new THREE.Raycaster();
         raycaster.setFromCamera( mouse, renderData.camera );

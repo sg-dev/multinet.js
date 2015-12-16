@@ -29,6 +29,7 @@ var centerY = -1000;
 */
 
 function displayGraph(data, renderData, coordinateTransformer, doAnimate, degreeSelector) {
+
     var graphData = createGraph3D(data, getRenderData());
 
     $('#table-button').show();

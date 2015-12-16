@@ -538,6 +538,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
             	console.log(data)
                 if(data.errors == null){ 
                     $('#loading-container').hide();        
+                    $('#container').width(window.innerWidth);
+                    $('#container').height(window.innerHeight);
+
                 	displayGraph(data, getRenderData());
                 	globalData = data;       
                 }else{

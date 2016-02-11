@@ -2,4 +2,6 @@ flask
 numpy
 matplotlib
 python-igraph
-graphlayout
+jupyter
+celery
+git+git://github.com/fhahn/pyFastLayout.git

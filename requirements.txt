@@ -4,4 +4,4 @@ matplotlib
 python-igraph
 jupyter
 celery
-git+git://github.com/fhahn/pyFastLayout.git
+git+git://github.com/sg-dev/pyFastLayout.git

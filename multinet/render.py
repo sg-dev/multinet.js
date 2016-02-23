@@ -372,3 +372,288 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
     except Exception,e:
         print "graph rendering failed", e
         return { "graph_ready": False,  "errors": e, }
+
+def csv_to_graph(filename, node_data_filename, directed_graph=True):
+    #read the uploaded file 
+    _path = filename
+
+    if node_data_filename:
+        _nd_path = node_data_filename
+    else:
+        _nd_path = None
+
+    max_node_ct = 0
+
+    unique_ct = lambda arg1: len(set(arg1))  
+
+    #dictionary to hold all data for each layer:
+    data = collections.OrderedDict()
+
+    #data type declaration for edges to be stored in numpy array
+    edges_type = [ ('from', np.str_,64), ('to', np.str_,64), ('layer', np.str_,64 ), ('timestamp', np.str_,10 ) ] 
+
+    data_labels = []
+    node_data = {}
+    custom_scale = {}
+    scale_index = -1
+
+    try:
+        if _nd_path:
+            with open(_nd_path) as csvfile:
+                reader = csv.reader(csvfile, delimiter=';')
+                data_labels = reader.next()
+                if 'scale' in data_labels:
+                    scale_index = data_labels.index('scale')
+
+                for row in reader:
+                    if scale_index > 0:
+                        custom_scale[row[0]] = min(max(float(row[scale_index]), 0.0), 1.0)
+                    else:
+                        custom_scale[row[0]] = 1.0
+                    node_data[row[0]] = row[1:]
+    except Exception,e:
+        pass
+
+    with open(_path) as f:
+        reader = csv.reader(f, delimiter=';')
+        if len(reader.next()) == 3:
+            edges_type = edges_type[:3]
+    edges = np.loadtxt( open(_path, 'rb'), delimiter=';',  skiprows = 1, dtype = edges_type )
+    if len(edges_type) == 3:
+        #fill the timestamp column with null timestamps if it is not in data
+        timestamps = len(edges["layer"]) * ['00-00-0000']
+    else:
+        timestamps = edges["timestamp"]
+    layers = sorted([ "%s" % ( layer, ) for layer in set( edges["layer"] ) ])
+
+    unique_keys = sorted( list( set(  timestamps ) ) ) 
+
+    print(layers)
+
+    if len(unique_keys) < 100:
+        nrbins = len(unique_keys)
+    else:
+        #shrink keyspace here by order of 10 so that we have less timestamps to deal with.
+        nrbins = int( math.floor( len(unique_keys)/10 ) )
+
+    bins = np.linspace(1, len(unique_keys), nrbins)
+
+    keys_indices = dict( zip( unique_keys,  [ i for i in range(1,len(unique_keys) + 1 ) ] ) )
+    timestamp_indices =  [ keys_indices[_ts] for _ts in timestamps ]
+
+    #detect which timestamps to be replaced according to the binned indices array
+    new_indices = np.digitize( timestamp_indices,bins )
+    indices_keys = dict(  zip( new_indices, timestamps ) )
+    keys_indices = dict(  zip( timestamps, new_indices ) )
+
+    keys_replace = {}
+
+    for _ind, _ts in enumerate( timestamps ):
+        try:
+            _key = keys_indices[_ts] 
+            _replace_ts = indices_keys[_key] 
+            keys_replace[_ind] = _replace_ts
+        except Exception,e:
+            print e
+
+    for _ind,_replace_ts in keys_replace.iteritems():
+        timestamps[_ind] = _replace_ts
+
+    #now we have 10% of the initial keys ..
+    unique_keys = sorted( list( set(  timestamps ) ) )
+
+    for layer in layers:
+        _layer_data = {}
+
+        edges_tmp = edges[edges["layer"] == layer]
+
+        if len(edges_type) == 3:
+            timestamps_tmp = len(edges_tmp["layer"]) * ['00-00-0000']
+        else:
+            timestamps_tmp = edges_tmp["timestamp"]
+
+        _edges = np.column_stack( ( edges_tmp["from"], edges_tmp["to"], timestamps_tmp ) ).tolist()
+        _in_degrees = dict( matplotlib.mlab.rec_groupby(edges_tmp, ('to',), (('from', unique_ct ,'indeg'),)) )
+        _nodes = np.append( edges_tmp["from"], edges_tmp["to"]  ).tolist() 
+        _out_degrees = {n: len(list(group)) for n, group in groupby(sorted(edges_tmp["from"]))}
+
+        #only possible with namedtuple:
+        #_layer_data.edges = _edges
+        #_layer_data.nodes = _nodes
+        #_layer_data.edge_ct = len(_edges)
+        #_layer_data.node_ct = len(_nodes)
+        #_layer_data.in_degrees = _in_degrees
+
+        _layer_data['edges'] = _edges
+        _layer_data['nodes'] = _nodes
+        _layer_data['edge_ct'] = len(_edges)
+        _layer_data['node_ct'] = len(_nodes)
+        _layer_data['in_degrees'] = _in_degrees
+        _layer_data['out_degrees'] = _out_degrees
+
+        max_node_ct = max(max_node_ct, len(_nodes))
+        data[layer] = _layer_data
+
+    #write edges to file
+    fid = generate_id()
+    tmp_name = "/tmp/edges%s" % (fid,)
+    _edges = np.column_stack( ( edges["from"], edges["to"] ) )
+    np.savetxt( tmp_name, _edges, fmt="%s", delimiter=' ' )
+
+
+    #calculate node coords
+    print "VIZUALISATION TIMER: igraph layouting :",datetime.now() 
+    #read from tmp file
+    ly_start = datetime.now()
+    return igraph.Graph.Read( tmp_name , directed=directed_graph,format="ncol",weights=False )
+
+
+def graph_layout2(graph, ly_alg = "Fruchterman-Reingold", directed_graph=True):
+
+    if ly_alg not in SUPPORTED_LAYOUTS:
+        return {
+            "graph_ready": False,
+            "errors": "Unsuspported layout algorithm"
+        }
+
+    print "VIZUALISATION TIMER: igraph layouting :",datetime.now() 
+    ly_start = datetime.now()
+
+    #new layouting by rcattano
+    dimension = 2
+    max_it = 500
+    temp = 1
+    nodes = len(graph.vs)
+    edges = np.array( [edge.tuple for edge in graph.es], np.int32)
+
+    _l = len(edges)
+
+    pos = fl.layout_fr(nodes*dimension, edges, max_it, temp )
+
+    #get the Layout object here. 
+    #http://igraph.org/python/doc/igraph.layout.Layout-class.html
+    scl =  int( _l/ 100 ) #int( _l * _l / 10 )
+    if ly_alg == "Fruchterman-Reingold":
+        ly = igraph.Layout(tuple(zip(pos[0:nodes], pos[nodes:2*nodes])))
+        scl = scl / 3
+    elif ly_alg == "LGL":
+        ly = graph.layout_lgl()
+    elif ly_alg == "Kamada-Kawai":
+        ly = graph.layout_kamada_kawai()
+        scl = scl / 10
+    elif ly_alg == "Star":
+        ly = graph.layout_star()
+        scl =  scl * 2
+    elif ly_alg == "Random":
+        ly = graph.layout_random()
+        scl =  scl * 2
+    else:
+        #ly = igraph.Layout( tuple(map(tuple, pos )) )
+        #scl = scl / 3
+        ly = graph.layout_fruchterman_reingold(dim=2,coolexp =1, area = int( _l * _l / 10 ) )
+        #ly_alg = "Fruchterman-Reingold"
+        #OR standard fruchterman reingold
+        
+    ly_end = datetime.now()
+    diff = ly_end - ly_start
+
+    print "VIZUALISATION TIMER: returning coordinates :",ly_end
+    print "Layouting took :", diff.seconds, "seconds using", ly_alg 
+
+    ly.scale( scl * 4)
+
+    box = ly.bounding_box()
+    width = abs(box.left) + abs(box.right)
+
+    coords = ly.__dict__['_coords']
+    #numpy.float64 cannot be jsonified later, so we convert to standard float:
+    coords = [ [ float( c[0] )* 1 , float( c[1] ) * 1 ] for c in coords  ]
+
+    #todo we have the node names somewhere already ...
+    vertices = []
+    for i in graph.vs:
+        vertices.append( i['name'] )
+
+    all_coords = dict( zip( vertices, coords ) )
+
+    #add coords to each layer and get the nodes in each layer intersect with the nodes in the next layer
+    layer_neighborhoods = []
+    for i,_l in enumerate(layers):
+        _layer_data = data[_l]
+
+        _layer_data['name'] = _l
+
+        try:
+            _layer_data_next = data[ layers[i+1] ]
+        except:
+            #last layer
+            _layer_data_next = data[ layers[i-1] ]
+
+        #possible with namedtuples
+        #nodes1 = _layer_data.nodes
+        #nodes2 = _layer_data_next.nodes
+        #indegs = _layer_data.in_degrees
+        max_in_deg = 0
+        max_out_deg = 0
+        max_total_deg = 0
+        nodes1 = _layer_data['nodes']
+        nodes2 = _layer_data_next['nodes']
+        indegs = _layer_data['in_degrees']
+        outdegs = _layer_data['out_degrees']
+
+        coords = {}
+        common_nodes = list(  set( nodes1 ).intersection( set( nodes2 ) ) )
+
+        for node_id in nodes1:
+            _common = 1 if node_id in common_nodes else 0
+            try:
+                indeg = indegs[ node_id ]
+                outdeg = outdegs[ node_id ]
+            except Exception,e:
+                indeg = 0
+                outdeg = 0
+            coords[node_id] = [ all_coords[ node_id ], _common, indeg, outdeg, indeg + outdeg, custom_scale.get(node_id, 1)] 
+
+            max_out_deg = max(max_out_deg, outdeg)
+            max_in_deg = max(max_in_deg, indeg)
+            max_total_deg = max(max_total_deg, outdeg + indeg)
+        #possible with namedtuples
+        #_layer_data.coords = coords
+
+        _layer_data['coords'] = coords
+
+        # add dummy 0 values, so max_in_degree and max_out_degree have to 
+        # same offset as the node's degrees
+        _layer_data['maxDeg'] = [0, 0, max_in_deg, max_out_deg, max_total_deg, 1.0] 
+
+        if directed_graph:
+            get_key = lambda v1, v2: ''.join([v1, v2])
+        else:
+            get_key = lambda v1, v2: ''.join(sorted([v1, v2]))
+
+        edge_dict = { get_key(x[0], x[1]):  x[2] for x in _layer_data['edges']}
+
+        neighborhood = {}
+        for i, nb in enumerate(graph.neighborhood()):
+            neighborhood[vertices[i]] = [[vertices[j], edge_dict[get_key(vertices[i], vertices[j])]] for j in nb if get_key(vertices[i], vertices[j]) in edge_dict]
+        _layer_data['neighborhood'] = neighborhood
+
+    print "VIZUALISATION TIMER: returning response to frontend :",datetime.now() 
+
+    data['layer_ct'] = len(data)
+    data['max_node_ct'] = max_node_ct
+    data['unique_keys'] = unique_keys
+    data['width'] = width
+    data['layout'] = ly_alg
+    data['layers'] = [data[l] for l in sorted(layers)]
+    if len(node_data) == 0 :
+        data['node_data'] = { n: [] for n in set(sum([data[l]['nodes'] for l in sorted(layers)], [])) }
+    else:
+        data['node_data'] = node_data
+    data['data_labels']= data_labels
+    data['directed'] = directed_graph
+    data['custom_scale'] = scale_index > 0
+
+    data = dict(data)
+
+    return data

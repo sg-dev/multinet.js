@@ -14,9 +14,8 @@ def init_3d():
     library_javascript = StringIO()
 
     library_javascript.write("""
-    <p>Loading javascript for 3D plot in browser</p>
 
-    /* Beginning of javascript injected by multinet.js */
+    <!-- Beginning of javascript injected by multinet.js -->
     <script type="text/javascript" src="multinet/static/js/jquery-2.1.4.js"></script>
     <script type="text/javascript" src="multinet/static/js/jquery-ui-1.11.4.js"></script>
 
@@ -30,10 +29,8 @@ def init_3d():
     <script type="text/javascript">
         var multinet_javascript_injected = true;
     </script>
+    <!-- End of javascript injected by multinet.js -->
     """)
-
-    library_javascript.write(
-                "/* End of javascript injected by multinet.js */\n</script>\n")
 
     display(HTML(library_javascript.getvalue()))
 

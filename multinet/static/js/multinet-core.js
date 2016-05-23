@@ -257,6 +257,7 @@ function displayEdgesInitial(keys, graphData, scene) {
 
     graphData.layer_starts = [];
 
+    console.log("edge coords", keys)
     for (var i=0; i < graphData.edge_coordinates.length; i++) {  
         var verts = [];
         var starts = [];
@@ -267,6 +268,8 @@ function displayEdgesInitial(keys, graphData, scene) {
 
         $.each(keys, function(foo, key) {
             starts.push({edges: verts.length, arrows: a_indices.length});
+            console.log(graphData.edge_coordinates[i][key])
+            console.log(graphData.edge_coordinates[i])
             if (graphData.edge_coordinates[i][key] !== undefined) {
                verts = verts.concat(graphData.edge_coordinates[i][key]);
                var edges = graphData.edge_coordinates[i][key];
@@ -309,6 +312,7 @@ function displayEdgesInitial(keys, graphData, scene) {
         graphData.layer_lines.push(new THREE.Line(bg, graphData.layer_line_materials[i], THREE.LinePieces));
         scene.add( graphData.layer_lines[i] );
     }
+    console.log(graphData.layer_lines);
 }
 function from_mesh(mesh, positions, indices) {
 
@@ -349,6 +353,9 @@ function addNode(node, parent_geometry, materialIndex, graphData, scale, layer_n
         scl = 1
     };
 
+    // TODO ignore node scale at the moment, some nodes become too big for graphs
+    // with few nodes
+    scl = 1
     if( scl == 3  ){ 
         //circle args = radius, #segments in circle
         var tmp_geometry = new THREE.CircleGeometry( scl, 8 );  
@@ -372,6 +379,7 @@ function addNode(node, parent_geometry, materialIndex, graphData, scale, layer_n
 }
 
 function addEdge(source, target, year, edge_coordinates) {
+    console.log('add edge', source.coords, target.coords, year)
     var edge_coords = edge_coordinates[year];
     if (edge_coords === undefined) {
         edge_coordinates[year] = [];

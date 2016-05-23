@@ -70,7 +70,33 @@ def cache_data(path, data, options):
 class MultiGraph:
     def __init__(self):
         self.igraph = igraph.Graph()
-        layers = []
+        self.layer_names = []
+        self.data = {} 
+        self.max_node_ct = 0
+        self.unique_keys = ['00-00-0000']
+        self.node_data = {}
+        self.data_labels = []
+        self.custom_scale = {}
+
+    def add_layer(self, layer_name):
+        if layer_name not in self.layer_names:
+            self.layer_names.append(layer_name)
+            self.data[layer_name] = {
+                'edges': [],
+                'nodes': [],
+                'edge_ct': 0,
+                'node_ct': 0,
+                'in_degrees': {},
+                'out_degrees': {}
+            }
+
+    def add_edge(self, from_, to, layer):
+        self.igraph.add_vertices([from_, to])
+        self.igraph.add_edge(from_, to)
+        layer_data = self.data[layer]
+        layer_data['edges'].append([from_, to, "00-00-0000"])
+        layer_data['nodes'] = list(set(layer_data['nodes'] + [from_, to]))
+        self.max_node_ct = max(self.max_node_ct, len(layer_data['nodes']))
 
     def layout(self, ly_alg = "Fruchterman-Reingold", directed_graph=True):
 
@@ -124,7 +150,8 @@ class MultiGraph:
         print "VIZUALISATION TIMER: returning coordinates :",ly_end
         print "Layouting took :", diff.seconds, "seconds using", ly_alg 
 
-        ly.scale( scl * 4)
+        # TODO screws up positioning for graphs with few nodes
+        #ly.scale( scl * 4)
 
         box = ly.bounding_box()
         width = abs(box.left) + abs(box.right)
@@ -199,12 +226,13 @@ class MultiGraph:
 
             neighborhood = {}
             for i, nb in enumerate(self.igraph.neighborhood()):
-                neighborhood[vertices[i]] = [[vertices[j], edge_dict[get_key(vertices[i], vertices[j])]] for j in nb if get_key(vertices[i], vertices[j]) in edge_dict]
+                l = []
+                neighborhood[vertices[i]] = neighborhood.get(vertices[i], l)  + [[vertices[j], edge_dict[get_key(vertices[i], vertices[j])]] for j in nb if get_key(vertices[i], vertices[j]) in edge_dict]
             _layer_data['neighborhood'] = neighborhood
 
         print "VIZUALISATION TIMER: returning response to frontend :",datetime.now() 
 
-        data = {}
+        data = self.data 
         data['layer_ct'] = len(self.data)
         data['max_node_ct'] = self.max_node_ct
         data['unique_keys'] = self.unique_keys
@@ -280,7 +308,6 @@ def graph_layout(filename, node_data_filename, ly_alg = "Fruchterman-Reingold", 
                     if scale_index > 0:
                         custom_scale[row[0]] = min(max(float(row[scale_index]), 0.0), 1.0)
                     else:
-                        custom_scale[row[0]] = 1.0
                     node_data[row[0]] = row[1:]
 
 

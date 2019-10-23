@@ -1,6 +1,8 @@
 [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
-# Update: Wednesday, 23 October 2019
+# Update: No Maintenance
+
+Wednesday, 23 October 2019
 
 The active developmen and support for the multinet.js library has been discontinued.
 The project’s code is provided as-is, and is not actively maintained.

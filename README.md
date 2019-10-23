@@ -4,7 +4,7 @@
 
 The active developmen and support for the multinet.js library has been discontinued.
 The project’s code is provided as-is, and is not actively maintained.
-The developers invite you to peruse their code and even use it in your next project, provided you follow the included license!
+We invite you to work with our code and even use it in your next project, provided you follow the included license!
 
 No support for the code is provided, and there is no guarantee that pull requests will be reviewed or merged.
 It’s open source, so forking is permitted; just be sure to give credit where it’s due!
